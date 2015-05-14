@@ -1,0 +1,9 @@
+{
+    "name": "Picross.js",
+    "description": "",
+    "version": "1.0.0",
+    "dependencies": {
+        "angular": "^1.x",
+        "angular-route": "^1.x"
+    }
+}

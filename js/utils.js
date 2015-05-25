@@ -1,133 +1,108 @@
 "use strict";
-
-var CellStatus = {"OPEN": 0, "CLOSED": 1, "CROSSED": 2};
-var RowStatus = {"EQUAL": 0, "WRONG": 1, "NOT_EQUAL": 2};
-
-function PicrossTable(r, c, disabled_rows, disabled_cols)
-{
-    this.r = r;
-    this.c = c;
-    this.table = new Array(r);
-    createEmptyTable(this.table, this.r, this.c, disabled_rows, disabled_cols);
-}
-
-PicrossTable.prototype.getCellStatus = function (i, j)
-{
-    return this.table[i][j];
-};
-
-PicrossTable.prototype.cycleCell = function (i, j)
-{
-    var status = this.getCellStatus(i, j);
-    if (status == CellStatus.OPEN)
-        this.table[i][j] = CellStatus.CLOSED;
-    else if (status == CellStatus.CLOSED)
-        this.table[i][j] = CellStatus.CROSSED;
-    else
-        this.table[i][j] = CellStatus.OPEN;
-};
-
-PicrossTable.prototype.checkRowStatus = function (r)
-{
-    var row = [];
-    var incr = false;
-    for (var j = 0; j < this.c; j++)
-    {
-        if (this.getCellStatus(r, j) == CellStatus.CLOSED)
-        {
-            if (!incr)
-            {
-                row.push(1);
-                incr = true;
+var CellStatus;
+(function (CellStatus) {
+    CellStatus[CellStatus["OPEN"] = 0] = "OPEN";
+    CellStatus[CellStatus["CLOSED"] = 1] = "CLOSED";
+    CellStatus[CellStatus["CROSSED"] = 2] = "CROSSED";
+})(CellStatus || (CellStatus = {}));
+var RowStatus;
+(function (RowStatus) {
+    RowStatus[RowStatus["EQUAL"] = 0] = "EQUAL";
+    RowStatus[RowStatus["WRONG"] = 1] = "WRONG";
+    RowStatus[RowStatus["NOT_EQUAL"] = 2] = "NOT_EQUAL";
+})(RowStatus || (RowStatus = {}));
+var PicrossTable = (function () {
+    function PicrossTable(r, c, disabled_rows, disabled_cols) {
+        this.r = r;
+        this.c = c;
+        this.table = new Array(r);
+        this.createEmptyTable(disabled_rows, disabled_cols);
+    }
+    PicrossTable.prototype.getCellStatus = function (i, j) {
+        return this.table[i][j];
+    };
+    PicrossTable.prototype.cycleCell = function (i, j) {
+        var status = this.getCellStatus(i, j);
+        if (status == 0 /* OPEN */)
+            this.table[i][j] = 1 /* CLOSED */;
+        else if (status == 1 /* CLOSED */)
+            this.table[i][j] = 2 /* CROSSED */;
+        else
+            this.table[i][j] = 0 /* OPEN */;
+    };
+    PicrossTable.prototype.checkRowStatus = function (r) {
+        var row = [];
+        var incr = false;
+        for (var j = 0; j < this.c; j++) {
+            if (this.getCellStatus(r, j) == 1 /* CLOSED */) {
+                if (!incr) {
+                    row.push(1);
+                    incr = true;
+                }
+                else
+                    row[row.length - 1]++;
             }
             else
-                row[row.length - 1]++;
+                incr = false;
         }
-        else
-            incr = false;
-    }
-    return row;
-};
-
-PicrossTable.prototype.checkColStatus = function (c)
-{
-    var col = [];
-    var incr = false;
-    for (var i = 0; i < this.r; i++)
-    {
-        if (this.getCellStatus(i, c) == CellStatus.CLOSED)
-        {
-            if (!incr)
-            {
-                col.push(1);
-                incr = true;
+        return row;
+    };
+    PicrossTable.prototype.checkColStatus = function (c) {
+        var col = [];
+        var incr = false;
+        for (var i = 0; i < this.r; i++) {
+            if (this.getCellStatus(i, c) == 1 /* CLOSED */) {
+                if (!incr) {
+                    col.push(1);
+                    incr = true;
+                }
+                else
+                    col[col.length - 1]++;
             }
             else
-                col[col.length - 1]++;
+                incr = false;
         }
-        else
-            incr = false;
-    }
-    return col;
-};
-
-function createEmptyTable(table, r, c, disabled_rows, disabled_cols)
-{
-    for (var i = 0; i < r; i++)
-    {
-        var row = new Array(c);
-        var row_disabled = disabled_rows.indexOf(i) >= 0;
-
-        for (var j = 0; j < c; j++)
-        {
-            var col_disabled = disabled_cols.indexOf(j) >= 0;
-            row[j] = (row_disabled || col_disabled) ? CellStatus.CROSSED : CellStatus.OPEN;
+        return col;
+    };
+    PicrossTable.prototype.createEmptyTable = function (disabled_rows, disabled_cols) {
+        for (var i = 0; i < this.r; i++) {
+            var row = new Array(this.c);
+            var row_disabled = disabled_rows.indexOf(i) >= 0;
+            for (var j = 0; j < this.c; j++) {
+                var col_disabled = disabled_cols.indexOf(j) >= 0;
+                row[j] = (row_disabled || col_disabled) ? 2 /* CROSSED */ : 0 /* OPEN */;
+            }
+            this.table[i] = row;
         }
-        table[i] = row;
-    }
-}
-
-function init_val_array(labels)
-{
+    };
+    return PicrossTable;
+})();
+function init_val_array(labels) {
     var ar = [];
-    for (var i = 0; i < labels.length; i++)
-    {
+    for (var i = 0; i < labels.length; i++) {
         if (labels[i].length == 1 && labels[i][0] === 0)
-            ar.push(RowStatus.EQUAL);
+            ar.push(0 /* EQUAL */);
         else
-            ar.push(RowStatus.NOT_EQUAL);
+            ar.push(2 /* NOT_EQUAL */);
     }
     return ar;
 }
-
-
-function checkRow(labels, row)
-{
+function checkRow(labels, row) {
     if (labels.length < row.length)
-        return RowStatus.WRONG;
+        return 1 /* WRONG */;
     else if (labels.length > row.length)
-        return RowStatus.NOT_EQUAL;
-
+        return 2 /* NOT_EQUAL */;
     for (var i = 0; i < labels.length; i++)
         if (labels[i] < row[i])
-            return RowStatus.WRONG;
+            return 1 /* WRONG */;
         else if (labels[i] > row[i])
-            return RowStatus.NOT_EQUAL;
-    return RowStatus.EQUAL;
+            return 2 /* NOT_EQUAL */;
+    return 0 /* EQUAL */;
 }
-
-function any(array, search_val)
-{
-    for (var i = 0; i < array.length; i++)
-        if (array[i] === search_val)
-            return true;
-    return false;
-}
-
-function all(array, search_val)
-{
+function all_el(array, search_val) {
     for (var i = 0; i < array.length; i++)
         if (array[i] !== search_val)
             return false;
     return true;
 }
+//# sourceMappingURL=utils.js.map

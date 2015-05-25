@@ -1,60 +1,46 @@
+///<reference path="typings/angularjs/angular.d.ts"/>
+///<reference path="typings/angularjs/angular-route.d.ts"/>
+///<reference path="services.ts"/>
+///<reference path="utils.ts"/>
 "use strict";
-/*jshint undef: false */
-
 var controllers = angular.module('controllers', []);
-
-
-controllers.controller("picrossCtrl", ["$scope", "$http", "$routeParams", "$location",
-    function ($scope, $http, $routeParams, $location)
-    {
+var PicrossCtrl = (function () {
+    function PicrossCtrl($scope, $routeParams, $location, Scheme) {
+        this.$scope = $scope;
+        this.$routeParams = $routeParams;
+        this.$location = $location;
+        this.Scheme = Scheme;
         $scope.schemeId = $routeParams.schemeId;
-
-        $http.get('data/scheme' + $scope.schemeId + '.json').success(function (data)
-        {
+        Scheme.get({ schemeID: $scope.schemeId }, function (data) {
             $scope.rowLabels = data.rowLabels;
             $scope.rowLabelStatus = init_val_array($scope.rowLabels);
             $scope.colLabels = data.colLabels;
             $scope.colLabelStatus = init_val_array($scope.colLabels);
-
             $scope.rowsDisabled = [];
             $scope.colsDisabled = [];
             var i;
             for (i = 0; i < data.rows; i++)
-                if ($scope.rowLabelStatus[i] === RowStatus.EQUAL)
+                if ($scope.rowLabelStatus[i] === 0 /* EQUAL */)
                     $scope.rowsDisabled.push(i);
-
             for (i = 0; i < data.cols; i++)
-                if ($scope.colLabelStatus[i] === RowStatus.EQUAL)
+                if ($scope.colLabelStatus[i] === 0 /* EQUAL */)
                     $scope.colsDisabled.push(i);
-
             $scope.table = new PicrossTable(data.rows, data.cols, $scope.rowsDisabled, $scope.colsDisabled);
-
             $scope.loaded = true;
             $scope.$emit("loaded");
-
-        }).error(function (data, status)
-        {
+        }, function () {
             $scope.loaded = false;
-            $location.path("/error/" + status);
-            $scope.$emit("error", status);
+            $location.path("/error/404");
+            $scope.$emit("error", "404");
         });
-
-        $scope.range = function (n)
-        {
-            return new Array(n);
-        };
-
-        $scope.updateEnabled = function (r, c)
-        {
+        $scope.range = function (n) { return new Array(n); };
+        $scope.updateEnabled = function (r, c) {
             var row = $scope.table.checkRowStatus(r);
             var col = $scope.table.checkColStatus(c);
-
             $scope.rowLabelStatus[r] = checkRow($scope.rowLabels[r], row);
             $scope.colLabelStatus[c] = checkRow($scope.colLabels[c], col);
         };
-
-        $scope.pressedCell = function (i, j)
-        {
+        $scope.pressedCell = function (i, j) {
             if ($scope.rowsDisabled.indexOf(i) >= 0 || $scope.colsDisabled.indexOf(j) >= 0)
                 return;
             $scope.table.cycleCell(i, j);
@@ -62,104 +48,93 @@ controllers.controller("picrossCtrl", ["$scope", "$http", "$routeParams", "$loca
             if ($scope.checkEnd())
                 $scope.$emit("end");
         };
-
-        $scope.getCellClass = function (i, j)
-        {
+        $scope.getCellClass = function (i, j) {
             if ($scope.table === undefined)
                 return; // avoids calls before the table has loaded
             var cell = $scope.table.getCellStatus(i, j);
-            if (cell == CellStatus.CLOSED)
+            if (cell === 1 /* CLOSED */)
                 return "fill";
-            else if (cell == CellStatus.CROSSED)
+            else if (cell == 2 /* CROSSED */)
                 return "crossed";
             else
                 return "";
         };
-
-        $scope.getLabelClass = function (index, isRow)
-        {
+        $scope.getLabelClass = function (index, isRow) {
             var status = isRow ? $scope.rowLabelStatus[index] : $scope.colLabelStatus[index];
-
-            if (status == RowStatus.EQUAL)
+            if (status === 0 /* EQUAL */)
                 return "label_disabled";
-            else if (status == RowStatus.WRONG)
+            else if (status == 1 /* WRONG */)
                 return "label_wrong";
             else
                 return "";
         };
-
-        $scope.checkEnd = function ()
-        {
-            return all($scope.rowLabelStatus, RowStatus.EQUAL) && all($scope.colLabelStatus, RowStatus.EQUAL);
+        $scope.checkEnd = function () {
+            return all_el($scope.rowLabelStatus, 0 /* EQUAL */) && all_el($scope.colLabelStatus, 0 /* EQUAL */);
         };
-    }]);
-
-controllers.controller("bodyController", ["$scope", "$http", "$location", "$route",
-    function ($scope, $http, $location, $route)
-    {
+    }
+    PicrossCtrl.$inject = ["$scope", "$routeParams", "$location", "Scheme"];
+    return PicrossCtrl;
+})();
+controllers.controller("picrossCtrl", PicrossCtrl);
+var BodyController = (function () {
+    function BodyController($scope, $location, $route, Scheme) {
+        this.$scope = $scope;
+        this.$location = $location;
+        this.$route = $route;
+        this.Scheme = Scheme;
         $scope.error = false;
-        $scope.child = {};
         $scope.errorMsg = "";
-        $scope.names = [1, 2, 3];
+        $scope.names = [null, null, null];
         $scope.end = false;
-
-        $http.get('data/schemes.json').success(function (data)
-        {
+        Scheme.query({}, function (data) {
             $scope.names = data;
-        }).error(function (data, status)
-        {
+        }, function (data, status) {
             $scope.error = true;
             $location.path("/error/" + status);
         });
-
-        $scope.next = function (i)
-        {
-            return (i + 1) % $scope.names.length;
-        };
-
-        $scope.previous = function (i)
-        {
-            return (i - 1 + $scope.names.length) % $scope.names.length;
-        };
-
-        $scope.increase = function ()
-        {
-            $scope.current = $scope.next($scope.current);
-            $location.path("/" + $scope.names[$scope.current].id);
-        };
-
-        $scope.decrease = function ()
-        {
-            $scope.current = $scope.previous($scope.current);
-            $location.path("/" + $scope.names[$scope.current].id);
-        };
-
-        $scope.reload_route = function ()
-        {
-            if (confirm("Sei sicuro?"))
-                $route.reload();
-        };
-
-        $scope.$on("end", function ()
-        {
+        $scope.$on("end", function () {
             console.log("end");
             $scope.end = true;
         });
-
-        $scope.$on("error", function (event, status)
-        {
+        $scope.$on("error", function (event, status) {
             $scope.error = true;
             $location.path("/error/" + status);
         });
-
-        $scope.$on("loaded", function (event)
-        {
-            $scope.current = parseInt(event.targetScope.schemeId - 1);
+        $scope.$on("loaded", function (event) {
+            var childScope = event.targetScope;
+            $scope.current = parseInt(childScope.schemeId) - 1;
         });
-    }]);
-
-controllers.controller("errorCtrl", ["$scope", "$routeParams",
-    function ($scope, $routeParams)
-    {
+        $scope.next = function (i) {
+            return (i + 1) % $scope.names.length;
+        };
+        $scope.previous = function (i) {
+            return (i - 1 + $scope.names.length) % $scope.names.length;
+        };
+        $scope.increase = function () {
+            $scope.current = $scope.next($scope.current);
+            $location.path("/" + $scope.names[$scope.current].id);
+        };
+        $scope.decrease = function () {
+            $scope.current = $scope.previous($scope.current);
+            $location.path("/" + $scope.names[$scope.current].id);
+        };
+        $scope.reload_route = function () {
+            if (confirm("Sei sicuro?"))
+                $route.reload();
+        };
+    }
+    BodyController.$inject = ["$scope", "$location", "$route", "Scheme"];
+    return BodyController;
+})();
+controllers.controller("bodyController", BodyController);
+var ErrorCtrl = (function () {
+    function ErrorCtrl($scope, $routeParams) {
+        this.$scope = $scope;
+        this.$routeParams = $routeParams;
         $scope.errorMsg = "" + $routeParams.status;
-    }]);
+    }
+    ErrorCtrl.$inject = ["$scope", "$routeParams"];
+    return ErrorCtrl;
+})();
+controllers.controller("errorCtrl", ErrorCtrl);
+//# sourceMappingURL=controllers.js.map

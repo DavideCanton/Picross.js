@@ -6,5 +6,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="jquery" level="application" />
     <orderEntry type="library" name="Picross.js node_modules" level="project" />
+    <orderEntry type="library" name="karma-jasmine" level="project" />
+    <orderEntry type="library" name="jasmine-core" level="project" />
   </component>
 </module>

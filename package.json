@@ -4,11 +4,10 @@
     "description": "",
     "dependencies": {
     },
-    "devDependencies": {},
     "scripts": {
         "start": "http-server -a localhost -p 8000",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
-    "author": "",
-    "license": "ISC"
+    "author": "DavideCanton",
+    "license": "MIT"
 }

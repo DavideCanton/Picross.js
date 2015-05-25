@@ -1,20 +1,15 @@
 ///<reference path="typings/angularjs/angular.d.ts"/>
 ///<reference path="typings/angularjs/angular-resource.d.ts"/>
+///<reference path="interfaces.ts"/>
 
 "use strict";
 
-var services : angular.IModule = angular.module("services", ['ngResource']);
-
-interface IScheme extends ng.resource.IResource<IScheme>
+module Services
 {
-    schemeID : number
+    export var services : angular.IModule = angular.module("services", ['ngResource']);
+
+    services.factory("Scheme", ['$resource', ($resource : ng.resource.IResourceService) : Interfaces.ISchemeResource =>
+    {
+        return <Interfaces.ISchemeResource> $resource("data/:schemeID.json", {schemeID: "schemes"}, {});
+    }]);
 }
-
-interface  ISchemeResource extends ng.resource.IResourceClass<IScheme>
-{
-}
-
-services.factory("Scheme", ['$resource', ($resource : ng.resource.IResourceService) : ISchemeResource =>
-{
-    return <ISchemeResource> $resource("data/:schemeID.json", {schemeID: "schemes"}, {});
-}]);

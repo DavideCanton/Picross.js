@@ -5,7 +5,7 @@
             <td class="rowLabel"></td>
             <td ng-repeat="label in colLabels track by $index" class="colLabel">
                 <div ng-repeat="val in label track by $index" class="colcelldiv cell"
-                     ng-class="getLabelClass($parent.$index, false)">
+                     ng-class="colLabelStatus[$parent.$index] | labelClass">
                     {{ val }}
                 </div>
             </td>
@@ -15,7 +15,7 @@
             <!-- row labels -->
             <td class="rowLabel">
                 <div ng-repeat="val in rowLabels[$index] | reverse track by $index"
-                     ng-class="getLabelClass($parent.$index, true)"
+                     ng-class="rowLabelStatus[$parent.$index] | labelClass"
                      class="cell rowcelldiv">
                     {{ val }}
                 </div>
@@ -23,7 +23,7 @@
 
             <td class="cell cellborder"
                 ng_repeat="_ in range(table.c) track by $index"
-                ng-class="getCellClass($parent.$index, $index)"
+                ng-class="table.getCellStatus($parent.$index, $index) | cellClass"
                 ng-click="pressedCell($parent.$index, $index)">
             </td>
         </tr>

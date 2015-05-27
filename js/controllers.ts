@@ -71,31 +71,6 @@ module Controllers
                     $scope.$emit("end");
             };
 
-            $scope.getCellClass = (i : number, j : number) : string =>
-            {
-                if ($scope.table === undefined)
-                    return; // avoids calls before the table has loaded
-                var cell = $scope.table.getCellStatus(i, j);
-                if (cell === Utils.CellStatus.CLOSED)
-                    return "fill";
-                else if (cell == Utils.CellStatus.CROSSED)
-                    return "crossed";
-                else
-                    return "";
-            };
-
-            $scope.getLabelClass = (index : number, isRow : boolean) : string =>
-            {
-                var status : Utils.RowStatus = isRow ? $scope.rowLabelStatus[index] : $scope.colLabelStatus[index];
-
-                if (status === Utils.RowStatus.EQUAL)
-                    return "label_disabled";
-                else if (status == Utils.RowStatus.WRONG)
-                    return "label_wrong";
-                else
-                    return "";
-            };
-
             $scope.checkEnd = () : boolean =>
             {
                 return (Utils.all_el($scope.rowLabelStatus, Utils.RowStatus.EQUAL) &&

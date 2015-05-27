@@ -51,26 +51,6 @@ var Controllers;
                 if ($scope.checkEnd())
                     $scope.$emit("end");
             };
-            $scope.getCellClass = function (i, j) {
-                if ($scope.table === undefined)
-                    return; // avoids calls before the table has loaded
-                var cell = $scope.table.getCellStatus(i, j);
-                if (cell === 1 /* CLOSED */)
-                    return "fill";
-                else if (cell == 2 /* CROSSED */)
-                    return "crossed";
-                else
-                    return "";
-            };
-            $scope.getLabelClass = function (index, isRow) {
-                var status = isRow ? $scope.rowLabelStatus[index] : $scope.colLabelStatus[index];
-                if (status === 0 /* EQUAL */)
-                    return "label_disabled";
-                else if (status == 1 /* WRONG */)
-                    return "label_wrong";
-                else
-                    return "";
-            };
             $scope.checkEnd = function () {
                 return (Utils.all_el($scope.rowLabelStatus, 0 /* EQUAL */) && Utils.all_el($scope.colLabelStatus, 0 /* EQUAL */));
             };

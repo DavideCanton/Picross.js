@@ -4,7 +4,7 @@ var Utils;
     (function (CellStatus) {
         CellStatus[CellStatus["OPEN"] = 0] = "OPEN";
         CellStatus[CellStatus["CLOSED"] = 1] = "CLOSED";
-        CellStatus[CellStatus["CROSSED"] = 2] = "CROSSED";
+        CellStatus[CellStatus["GRAYED"] = 2] = "GRAYED";
     })(Utils.CellStatus || (Utils.CellStatus = {}));
     var CellStatus = Utils.CellStatus;
     (function (RowStatus) {
@@ -23,56 +23,74 @@ var Utils;
         PicrossTable.prototype.getCellStatus = function (i, j) {
             return this.table[i][j];
         };
-        PicrossTable.prototype.cycleCell = function (i, j) {
+        PicrossTable.prototype.closeCell = function (i, j) {
             var status = this.getCellStatus(i, j);
-            if (status == 0 /* OPEN */)
-                this.table[i][j] = 1 /* CLOSED */;
-            else if (status == 1 /* CLOSED */)
-                this.table[i][j] = 2 /* CROSSED */;
-            else
-                this.table[i][j] = 0 /* OPEN */;
+            switch (status) {
+                case 1 /* CLOSED */:
+                    this.table[i][j] = 0 /* OPEN */;
+                    break;
+                case 0 /* OPEN */:
+                    this.table[i][j] = 1 /* CLOSED */;
+                    break;
+                case 2 /* GRAYED */:
+                    this.table[i][j] = 0 /* OPEN */;
+                    break;
+            }
+        };
+        PicrossTable.prototype.crossCell = function (i, j) {
+            var status = this.getCellStatus(i, j);
+            switch (status) {
+                case 1 /* CLOSED */:
+                    this.table[i][j] = 2 /* GRAYED */;
+                    break;
+                case 0 /* OPEN */:
+                    this.table[i][j] = 2 /* GRAYED */;
+                    break;
+                case 2 /* GRAYED */:
+                    this.table[i][j] = 0 /* OPEN */;
+                    break;
+            }
         };
         PicrossTable.prototype.checkRowStatus = function (r) {
             var row = [];
-            var incr = false;
-            for (var j = 0; j < this.c; j++) {
-                if (this.getCellStatus(r, j) == 1 /* CLOSED */) {
-                    if (!incr) {
-                        row.push(1);
-                        incr = true;
-                    }
-                    else
-                        row[row.length - 1]++;
-                }
-                else
-                    incr = false;
-            }
+            var incrementer = this.IncrementerFactory(row);
+            for (var j = 0; j < this.c; j++)
+                incrementer(this.getCellStatus(r, j));
             return row;
         };
         PicrossTable.prototype.checkColStatus = function (c) {
             var col = [];
-            var incr = false;
-            for (var i = 0; i < this.r; i++) {
-                if (this.getCellStatus(i, c) == 1 /* CLOSED */) {
-                    if (!incr) {
-                        col.push(1);
-                        incr = true;
+            var incrementer = this.IncrementerFactory(col);
+            for (var i = 0; i < this.r; i++)
+                incrementer(this.getCellStatus(i, c));
+            return col;
+        };
+        PicrossTable.prototype.IncrementerFactory = function (res) {
+            var currentBlock = false;
+            return function (status) {
+                if (status === 1 /* CLOSED */) {
+                    if (!currentBlock) {
+                        res.push(1);
+                        currentBlock = true;
                     }
                     else
-                        col[col.length - 1]++;
+                        res[res.length - 1]++;
                 }
                 else
-                    incr = false;
-            }
-            return col;
+                    currentBlock = false;
+            };
         };
         PicrossTable.prototype.createEmptyTable = function (disabled_rows, disabled_cols) {
             for (var i = 0; i < this.r; i++) {
                 var row = new Array(this.c);
                 var row_disabled = disabled_rows.indexOf(i) >= 0;
                 for (var j = 0; j < this.c; j++) {
-                    var col_disabled = disabled_cols.indexOf(j) >= 0;
-                    row[j] = (row_disabled || col_disabled) ? 2 /* CROSSED */ : 0 /* OPEN */;
+                    if (row_disabled)
+                        row[j] = 2 /* GRAYED */;
+                    else {
+                        var col_disabled = disabled_cols.indexOf(j) >= 0;
+                        row[j] = col_disabled ? 2 /* GRAYED */ : 0 /* OPEN */;
+                    }
                 }
                 this.table[i] = row;
             }
@@ -82,12 +100,12 @@ var Utils;
     Utils.PicrossTable = PicrossTable;
     function init_val_array(labels) {
         var ar = [];
-        for (var i = 0; i < labels.length; i++) {
-            if (labels[i].length == 1 && labels[i][0] === 0)
+        labels.forEach(function (label) {
+            if (label.length == 1 && label[0] === 0)
                 ar.push(0 /* EQUAL */);
             else
                 ar.push(2 /* NOT_EQUAL */);
-        }
+        });
         return ar;
     }
     Utils.init_val_array = init_val_array;
@@ -105,10 +123,7 @@ var Utils;
     }
     Utils.checkRow = checkRow;
     function all_el(array, search_val) {
-        for (var i = 0; i < array.length; i++)
-            if (array[i] !== search_val)
-                return false;
-        return true;
+        return array.every(function (el) { return el === search_val; });
     }
     Utils.all_el = all_el;
 })(Utils || (Utils = {}));

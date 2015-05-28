@@ -2,9 +2,9 @@
     <table id="picrossTable" ng-show="loaded">
         <!-- column labels -->
         <tr>
-            <td class="rowLabel"></td>
-            <td ng-repeat="label in colLabels track by $index" class="colLabel">
-                <div ng-repeat="val in label track by $index" class="colcelldiv cell"
+            <td class="row-label"></td>
+            <td ng-repeat="label in colLabels track by $index" class="col-label">
+                <div ng-repeat="val in label track by $index" class="col-label-cell"
                      ng-class="colLabelStatus[$parent.$index] | labelClass">
                     {{ val }}
                 </div>
@@ -13,18 +13,19 @@
 
         <tr ng-repeat="_ in range(table.r) track by $index">
             <!-- row labels -->
-            <td class="rowLabel">
+            <td class="row-label">
                 <div ng-repeat="val in rowLabels[$index] | reverse track by $index"
                      ng-class="rowLabelStatus[$parent.$index] | labelClass"
-                     class="cell rowcelldiv">
+                     class="row-label-cell">
                     {{ val }}
                 </div>
             </td>
 
-            <td class="cell cellborder"
+            <td class="cell cell-border"
                 ng_repeat="_ in range(table.c) track by $index"
                 ng-class="table.getCellStatus($parent.$index, $index) | cellClass"
-                ng-click="pressedCell($parent.$index, $index)">
+                ng-click="pressedCell($parent.$index, $index)"
+                ng-right-click="pressedRightCell($parent.$index, $index)">
             </td>
         </tr>
     </table>

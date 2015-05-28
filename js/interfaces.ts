@@ -40,9 +40,10 @@ module Interfaces
         loaded : boolean;
 
         range(n : number) : number[];
-        updateEnabled(r : number, c : number):void;
-        pressedCell(i : number, j : number):void;
-        getCellClass(i : number, j : number):string;
+        updateEnabled(r : number, c : number) : void;
+        pressedCell(i : number, j : number) : void;
+        pressedRightCell(i : number, j : number) : void;
+        getCellClass(i : number, j : number) : string;
         getLabelClass(index : number, isRow : boolean):string;
         checkEnd():boolean;
     }

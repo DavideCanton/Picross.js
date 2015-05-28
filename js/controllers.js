@@ -46,10 +46,16 @@ var Controllers;
             $scope.pressedCell = function (i, j) {
                 if ($scope.rowsDisabled.indexOf(i) >= 0 || $scope.colsDisabled.indexOf(j) >= 0)
                     return;
-                $scope.table.cycleCell(i, j);
+                $scope.table.closeCell(i, j);
                 $scope.updateEnabled(i, j);
                 if ($scope.checkEnd())
                     $scope.$emit("end");
+            };
+            $scope.pressedRightCell = function (i, j) {
+                if ($scope.rowsDisabled.indexOf(i) >= 0 || $scope.colsDisabled.indexOf(j) >= 0)
+                    return;
+                $scope.table.crossCell(i, j);
+                $scope.updateEnabled(i, j);
             };
             $scope.checkEnd = function () {
                 return (Utils.all_el($scope.rowLabelStatus, 0 /* EQUAL */) && Utils.all_el($scope.colLabelStatus, 0 /* EQUAL */));

@@ -4,7 +4,7 @@
 var PicrossApp;
 (function (PicrossApp) {
     "use strict";
-    PicrossApp.app = angular.module("picrossApp", ['ngRoute', 'controllers', 'filters', 'services']);
+    PicrossApp.app = angular.module("picrossApp", ['ngRoute', 'controllers', 'filters', 'services', 'directives']);
     PicrossApp.app.config(['$routeProvider', function ($routeProvider) {
         $routeProvider.when('/:schemeId', {
             templateUrl: 'partials/show_picross.html',

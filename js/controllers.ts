@@ -65,10 +65,18 @@ module Controllers
             {
                 if ($scope.rowsDisabled.indexOf(i) >= 0 || $scope.colsDisabled.indexOf(j) >= 0)
                     return;
-                $scope.table.cycleCell(i, j);
+                $scope.table.closeCell(i, j);
                 $scope.updateEnabled(i, j);
                 if ($scope.checkEnd())
                     $scope.$emit("end");
+            };
+
+            $scope.pressedRightCell = (i : number, j : number) : void =>
+            {
+                if ($scope.rowsDisabled.indexOf(i) >= 0 || $scope.colsDisabled.indexOf(j) >= 0)
+                    return;
+                $scope.table.grayCell(i, j);
+                $scope.updateEnabled(i, j);
             };
 
             $scope.checkEnd = () : boolean =>

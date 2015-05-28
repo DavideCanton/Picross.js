@@ -2,11 +2,16 @@
 
 module Utils
 {
+    interface CheckFunc
+    {
+        (CellStatus) : void;
+    }
+
     export enum CellStatus
     {
         OPEN,
         CLOSED,
-        CROSSED
+        GRAYED
     }
 
     export enum RowStatus
@@ -35,59 +40,81 @@ module Utils
             return this.table[i][j];
         }
 
-        cycleCell(i : number, j : number)
+        closeCell(i : number, j : number) : void
         {
             var status : CellStatus = this.getCellStatus(i, j);
-            if (status == CellStatus.OPEN)
-                this.table[i][j] = CellStatus.CLOSED;
-            else if (status == CellStatus.CLOSED)
-                this.table[i][j] = CellStatus.CROSSED;
-            else
-                this.table[i][j] = CellStatus.OPEN;
+            switch (status)
+            {
+                case CellStatus.CLOSED:
+                    this.table[i][j] = CellStatus.OPEN;
+                    break;
+                case CellStatus.OPEN:
+                    this.table[i][j] = CellStatus.CLOSED;
+                    break;
+                case CellStatus.GRAYED:
+                    this.table[i][j] = CellStatus.OPEN;
+                    break;
+            }
+        }
+
+        grayCell(i : number, j : number) : void
+        {
+            var status : CellStatus = this.getCellStatus(i, j);
+            switch (status)
+            {
+                case CellStatus.CLOSED:
+                    this.table[i][j] = CellStatus.GRAYED;
+                    break;
+                case CellStatus.OPEN:
+                    this.table[i][j] = CellStatus.GRAYED;
+                    break;
+                case CellStatus.GRAYED:
+                    this.table[i][j] = CellStatus.OPEN;
+                    break;
+            }
         }
 
         checkRowStatus(r : number) : number[]
         {
             var row : number[] = [];
-            var incr : boolean = false;
+            var incrementer : CheckFunc = this.IncrementerFactory(row);
+
             for (var j = 0; j < this.c; j++)
-            {
-                if (this.getCellStatus(r, j) == CellStatus.CLOSED)
-                {
-                    if (!incr)
-                    {
-                        row.push(1);
-                        incr = true;
-                    }
-                    else
-                        row[row.length - 1]++;
-                }
-                else
-                    incr = false;
-            }
+                incrementer(this.getCellStatus(r, j));
+
             return row;
         }
 
         checkColStatus(c : number) : number[]
         {
             var col : number[] = [];
-            var incr : boolean = false;
+            var incrementer : CheckFunc = this.IncrementerFactory(col);
+
             for (var i = 0; i < this.r; i++)
+                incrementer(this.getCellStatus(i, c));
+
+            return col;
+        }
+
+        private IncrementerFactory(res : number[]) : CheckFunc
+        {
+            var currentBlock : boolean = false;
+
+            return (status : CellStatus) =>
             {
-                if (this.getCellStatus(i, c) == CellStatus.CLOSED)
+                if (status === CellStatus.CLOSED)
                 {
-                    if (!incr)
+                    if (!currentBlock)
                     {
-                        col.push(1);
-                        incr = true;
+                        res.push(1);
+                        currentBlock = true;
                     }
                     else
-                        col[col.length - 1]++;
+                        res[res.length - 1]++;
                 }
                 else
-                    incr = false;
-            }
-            return col;
+                    currentBlock = false;
+            };
         }
 
         private createEmptyTable(disabled_rows : number[], disabled_cols : number[])
@@ -99,8 +126,13 @@ module Utils
 
                 for (var j = 0; j < this.c; j++)
                 {
-                    var col_disabled = disabled_cols.indexOf(j) >= 0;
-                    row[j] = (row_disabled || col_disabled) ? CellStatus.CROSSED : CellStatus.OPEN;
+                    if (row_disabled)
+                        row[j] = CellStatus.GRAYED;
+                    else
+                    {
+                        var col_disabled = disabled_cols.indexOf(j) >= 0;
+                        row[j] = col_disabled ? CellStatus.GRAYED : CellStatus.OPEN;
+                    }
                 }
                 this.table[i] = row;
             }
@@ -111,13 +143,13 @@ module Utils
     export function init_val_array(labels : number[][]) : RowStatus[]
     {
         var ar : RowStatus[] = [];
-        for (var i = 0; i < labels.length; i++)
+        labels.forEach((label : number[]) =>
         {
-            if (labels[i].length == 1 && labels[i][0] === 0)
+            if (label.length == 1 && label[0] === 0)
                 ar.push(RowStatus.EQUAL);
             else
                 ar.push(RowStatus.NOT_EQUAL);
-        }
+        });
         return ar;
     }
 
@@ -139,9 +171,6 @@ module Utils
 
     export function all_el<T>(array : T[], search_val : T) : boolean
     {
-        for (var i = 0; i < array.length; i++)
-            if (array[i] !== search_val)
-                return false;
-        return true;
+        return array.every((el) => el === search_val);
     }
 }

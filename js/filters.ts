@@ -37,7 +37,7 @@ module Filters
             {
                 case Utils.CellStatus.CLOSED:
                     return "fill";
-                case Utils.CellStatus.CROSSED:
+                case Utils.CellStatus.GRAYED:
                     return "crossed";
                 default:
                     return "";

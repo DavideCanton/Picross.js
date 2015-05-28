@@ -6,7 +6,8 @@ module PicrossApp
 {
     "use strict";
 
-    export var app : ng.IModule = angular.module("picrossApp", ['ngRoute', 'controllers', 'filters', 'services']);
+    export var app : ng.IModule = angular.module("picrossApp", ['ngRoute', 'controllers',
+        'filters', 'services', 'directives']);
 
     app.config(['$routeProvider',
         function ($routeProvider : ng.route.IRouteProvider)

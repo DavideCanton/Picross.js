@@ -25,7 +25,7 @@ var Filters;
             switch (status) {
                 case 1 /* CLOSED */:
                     return "fill";
-                case 2 /* CROSSED */:
+                case 2 /* GRAYED */:
                     return "crossed";
                 default:
                     return "";

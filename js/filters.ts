@@ -23,7 +23,7 @@ module Filters
                     return "label_disabled";
                 case Utils.RowStatus.WRONG:
                     return "label_wrong";
-                default :
+                default:
                     return "";
             }
         };

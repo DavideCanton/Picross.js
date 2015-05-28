@@ -17,6 +17,7 @@
     "files": [
         "./app.ts",
         "./controllers.ts",
+        "./directives.ts",
         "./filters.ts",
         "./interfaces.ts",
         "./services.ts",

@@ -9,9 +9,9 @@ module Directives
         return (scope, element, attrs) =>
         {
             var fn = $parse(attrs.ngRightClick);
-            element.bind('contextmenu', function (event)
+            element.bind('contextmenu', (event) =>
             {
-                scope.$apply(function ()
+                scope.$apply(() =>
                 {
                     event.preventDefault();
                     fn(scope, {$event: event});

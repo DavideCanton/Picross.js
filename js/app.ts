@@ -10,7 +10,7 @@ module PicrossApp
         'filters', 'services', 'directives']);
 
     app.config(['$routeProvider',
-        function ($routeProvider : ng.route.IRouteProvider)
+        ($routeProvider : ng.route.IRouteProvider) =>
         {
             $routeProvider.
                 when('/:schemeId', {

@@ -5,8 +5,7 @@
     "dependencies": {
     },
     "scripts": {
-        "start": "http-server -a localhost -p 8000",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "start": "http-server ./app -a localhost -p 8000"
     },
     "author": "DavideCanton",
     "license": "MIT"

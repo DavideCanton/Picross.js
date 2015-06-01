@@ -1,0 +1,33 @@
+<div id="content" ng-controller="picrossCtrl">
+    <table id="picrossTable" ng-show="loaded">
+        <!-- column labels -->
+        <tr>
+            <td class="row-label"></td>
+            <td ng-repeat="colIndex in range(table.c)" class="col-label">
+                <div ng-repeat="val in table.getColLabel(colIndex) track by $index" class="col-label-cell"
+                     ng-class="table.getColLabelStatus(colIndex) | labelClass">
+                    {{ val }}
+                </div>
+            </td>
+        </tr>
+
+        <tr ng-repeat="rowIndex in range(table.r)">
+            <!-- row labels -->
+            <td class="row-label">
+                <div ng-repeat="val in table.getRowLabel(rowIndex) | reverse track by $index"
+                     ng-class="table.getRowLabelStatus(rowIndex) | labelClass"
+                     class="row-label-cell">
+                    {{ val }}
+                </div>
+            </td>
+
+            <td class="cell cell-border"
+                ng_repeat="colIndex in range(table.c)"
+                ng-class="table.getCellStatus(rowIndex, colIndex) | cellClass"
+                ng-click="pressedCell(rowIndex, colIndex)"
+                ng-right-click="pressedRightCell(rowIndex, colIndex)">
+            </td>
+        </tr>
+    </table>
+
+</div>

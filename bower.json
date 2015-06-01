@@ -5,6 +5,9 @@
     "dependencies": {
         "angular": "^1.x",
         "angular-route": "^1.x",
-        "angular-resource": "^1.x"
+        "angular-resource": "^1.x",
+        "angular-mocks": "^1.x",
+        "bootstrap": "^3.x",
+        "jquery": "^2.x"
     }
 }

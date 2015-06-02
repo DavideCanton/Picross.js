@@ -1,0 +1,8 @@
+iframe {
+    width: 75%;
+    height: 800px;
+    overflow: scroll;
+    border: 20px outset rgb(124, 77, 22);
+    margin: 0 auto 10px auto;
+    display: block;
+}

@@ -1,5 +1,6 @@
 ///<reference path="typings/angularjs/angular.d.ts"/>
 ///<reference path="typings/angularjs/angular-route.d.ts"/>
+///<reference path="typings/underscore/underscore.d.ts"/>
 ///<reference path="interfaces.ts"/>
 ///<reference path="utils.ts"/>
 "use strict";
@@ -15,10 +16,7 @@ var Controllers;
             $scope.table = Utils.PicrossTable.randomTable(+$routeParams.w, +$routeParams.h, +$routeParams.p);
             $scope.loaded = true;
             $scope.range = function (n) {
-                var a = [];
-                for (var i = 0; i < n; i++)
-                    a.push(i);
-                return a;
+                return _.range(n);
             };
             $scope.updateEnabled = function (r, c) {
                 $scope.table.updateRowStatus(r);

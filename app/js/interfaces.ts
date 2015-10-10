@@ -48,6 +48,11 @@ module Interfaces
         val: (any) => void;
     }
 
+    export interface LabelClassDirectiveScope extends  ng.IScope
+    {
+        status: Utils.RowStatus;
+    }
+
     export interface IBodyControllerScope extends ng.IScope
     {
         error : boolean;

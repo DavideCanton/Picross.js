@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Picross online</title>
-    <link rel="stylesheet" href="css/picrossCSS.css"/>
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css"/>
+    <link rel="stylesheet" href="css/picrossCSS.css"/>
     <script src="bower_components/jquery/dist/jquery.js"></script>
     <script src="bower_components/angular/angular.js"></script>
     <script src="bower_components/angular-route/angular-route.js"></script>
@@ -14,37 +14,23 @@
     <script src="js/utils.js"></script>
     <script src="js/app.js"></script>
     <script src="js/controllers.js"></script>
-    <script src="js/filters.js"></script>
-    <script src="js/services.js"></script>
     <script src="js/directives.js"></script>
 </head>
 <body ng-controller="bodyCtrl">
-<div class="page-header text-center">
+<div class="text-center">
     <h1>Picross!</h1>
-
-    <p class="label label-success" ng-show="end">
-        Completato!
-    </p>
 </div>
 
 <div class="container">
-    <nav ng-show="!error">
-        <ul class="pager">
-            <li class="col-sm-2">
-                <a href="" ng-click="decrease()" aria-label="Previous">
-                    <span aria-hidden="true">Previous</span>
-                </a>
-            </li>
-            <li class="col-sm-8">
-                <a href="" ng-click="reload_route()">{{names[current].name}}</a>
-            </li>
-            <li class="col-sm-2">
-                <a href="" ng-click="increase()" aria-label="Next">
-                    <span aria-hidden="true">Next</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
+    <div class="row">
+        <form class="col-sm-12 form-inline" id="main-form">
+            <label for="rows">Rows</label>
+            <input class="form-control" id="rows" type="number" placeholder="Rows" ng-model="rows">
+            <label for="cols">Cols</label>
+            <input class="form-control" id="cols" type="number" placeholder="Cols" ng-model="cols">
+            <button type="submit" ng-click="goTo(rows, cols, $event)" class="btn btn-default">Random</button>
+        </form>
+    </div>
 </div>
 
 <div ng-view>

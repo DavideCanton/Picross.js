@@ -1,16 +1,25 @@
 body {
   margin: 0;
-  padding: 0; }
+  padding: 0;
+  background-color: #ffd8a6; }
+
+#main-form {
+  text-align: center;
+  margin: 30px 0; }
+  #main-form input {
+    width: 100px; }
 
 .cell, .row-label-cell, .col-label-cell {
   width: 50px;
-  height: 50px; }
+  height: 50px;
+  font-family: cursive; }
 
 .cell-border {
   border: 1px solid black; }
 
 .row-label-cell {
-  float: right; }
+  display: inline-block;
+  text-align: center; }
 
 .label_disabled {
   color: gray; }
@@ -19,20 +28,28 @@ body {
   color: red; }
 
 .col-label-cell {
-  transform: rotate(90deg); }
+  /*transform: rotate(90deg);*/ }
 
 #picrossTable {
-  margin: auto; }
-  #picrossTable td {
+  margin: auto;
+  user-select: none;
+  border-spacing: 1px;
+  border-collapse: separate; }
+  #picrossTable.completed td.internal-cell.fill {
+    background-color: green; }
+  #picrossTable.completed td.internal-cell.crossed {
+    background-color: transparent; }
+  #picrossTable td.internal-cell {
+    cursor: pointer;
     transition: background-color .2s; }
-    #picrossTable td.fill {
+    #picrossTable td.internal-cell.fill {
       background-color: black; }
-    #picrossTable td.crossed {
+    #picrossTable td.internal-cell.crossed {
       background-color: grey; }
 
 .row-label {
   border: none;
-  text-align: center;
+  text-align: right;
   font-size: 30px;
   height: 50px;
   width: auto; }
@@ -48,5 +65,9 @@ body {
 
 .schemeLink {
   margin-right: 5px; }
+
+h1 {
+  font-family: cursive;
+  font-style: oblique; }
 
 /*# sourceMappingURL=picrossCSS.css.map */

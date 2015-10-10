@@ -4,16 +4,15 @@
 var PicrossApp;
 (function (PicrossApp) {
     "use strict";
-    PicrossApp.app = angular.module("picrossApp", ['ngRoute', 'controllers', 'filters', 'services', 'directives']);
+    PicrossApp.app = angular.module("picrossApp", ['ngRoute', 'controllers', 'directives']);
     PicrossApp.app.config(['$routeProvider', function ($routeProvider) {
-        $routeProvider.when('/scheme/:schemeId', {
+        $routeProvider.when('/', {}).when('/scheme', {
             templateUrl: 'partials/show_picross.html',
             controller: 'picrossCtrl'
         }).when('/error/:status', {
             templateUrl: 'partials/error_page.html',
             controller: 'errorCtrl'
-        });
-        $routeProvider.otherwise("/scheme/1");
+        }).otherwise("/error/404");
     }]);
 })(PicrossApp || (PicrossApp = {}));
 //# sourceMappingURL=app.js.map

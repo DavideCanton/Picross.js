@@ -23,34 +23,75 @@ module Utils
         NOT_EQUAL
     }
 
+    export interface RowData
+    {
+        label : number[];
+        disabled : boolean;
+        status : RowStatus;
+    }
+
     export class PicrossTable
     {
         r : number;
         c : number;
         table : CellStatus[][];
-        rowLabels : number[][];
-        colLabels : number[][];
-        disabled_rows : number[];
-        disabled_cols : number[];
-        rowLabelStatus : RowStatus[];
-        colLabelStatus : RowStatus[];
+        rows : RowData[];
+        cols : RowData[];
+
+        static randomTable(r : number, c : number, percentage : number) : PicrossTable
+        {
+            var table = new PicrossTable(null);
+            table.r = r;
+            table.c = c;
+
+            table.createRandomTable(percentage);
+            table.setupData();
+            table.createEmptyTable();
+
+            return table;
+        }
 
         constructor(data : Interfaces.JSONSchemeData)
         {
-            this.r = data.rows;
-            this.c = data.cols;
-            this.rowLabels = data.rowLabels;
-            this.colLabels = data.colLabels;
-            this.table = new Array(this.r);
+            if (data)
+            {
+                this.r = data.rows;
+                this.c = data.cols;
 
-            this.disabled_rows = this._computeDisabledRows();
-            this.disabled_cols = this._computeDisabledCols();
-            this.createEmptyTable();
+                this.rows = data.rowLabels.map((label : number[])=>
+                {
+                    var disabled : boolean = PicrossTable._isLabelDisabled(label);
+
+                    return <RowData> {
+                        label: label,
+                        disabled: disabled,
+                        status: disabled ? RowStatus.EQUAL : RowStatus.NOT_EQUAL
+                    };
+                });
+                this.cols = data.colLabels.map((label : number[])=>
+                {
+                    var disabled : boolean = PicrossTable._isLabelDisabled(label);
+
+                    return <RowData> {
+                        label: label,
+                        disabled: disabled,
+                        status: disabled ? RowStatus.EQUAL : RowStatus.NOT_EQUAL
+                    };
+                });
+
+                this.table = new Array(this.r);
+                this.createEmptyTable();
+            }
         }
 
         getCellStatus(i : number, j : number) : CellStatus
         {
             return this.table[i][j];
+        }
+
+        setCellStatus(i : number, j : number, status : CellStatus) : void
+        {
+            this.table[i][j] = status;
         }
 
         closeCell(i : number, j : number) : void
@@ -87,7 +128,7 @@ module Utils
             }
         }
 
-        private _checkRowStatus(r : number) : number[]
+        private _computeActualRowLabels(r : number) : number[]
         {
             var row : number[] = [];
             var incrementer : CheckFunc = this.IncrementerFactory(row);
@@ -95,16 +136,22 @@ module Utils
             for (var j = 0; j < this.c; j++)
                 incrementer(this.getCellStatus(r, j));
 
+            if (row.length == 0)
+                row = [0];
+
             return row;
         }
 
-        private _checkColStatus(c : number) : number[]
+        private _computeActualColLabels(c : number) : number[]
         {
             var col : number[] = [];
             var incrementer : CheckFunc = this.IncrementerFactory(col);
 
             for (var i = 0; i < this.r; i++)
                 incrementer(this.getCellStatus(i, c));
+
+            if (col.length == 0)
+                col = [0];
 
             return col;
         }
@@ -130,92 +177,60 @@ module Utils
             };
         }
 
+        private createRandomTable(percentage : number) : void
+        {
+            this.table = [];
+            for (var i = 0; i < this.r; i++)
+            {
+                var row : CellStatus[] = new Array(this.c);
+
+                for (var j = 0; j < this.c; j++)
+                    row[j] = Math.random() <= percentage ? CellStatus.CLOSED : CellStatus.OPEN;
+                this.table[i] = row;
+            }
+        }
+
         private createEmptyTable()
         {
             for (var i = 0; i < this.r; i++)
             {
                 var row : CellStatus[] = new Array(this.c);
-                var row_disabled : boolean = this.isRowDisabled(i);
+                var row_disabled : boolean = this.getRowData(i).disabled;
 
                 for (var j = 0; j < this.c; j++)
                 {
                     if (row_disabled)
                         row[j] = CellStatus.GRAYED;
                     else
-                        row[j] = this.isColDisabled(j) ? CellStatus.GRAYED : CellStatus.OPEN;
+                        row[j] = this.getColData(j).disabled ? CellStatus.GRAYED : CellStatus.OPEN;
                 }
                 this.table[i] = row;
             }
         }
 
-        isRowDisabled(i : number) : boolean
+        getRowsData() : RowData[]
         {
-            return this.disabled_rows.indexOf(i) >= 0;
+            return this.rows;
         }
 
-        isColDisabled(j : number) : boolean
+        getColsData() : RowData[]
         {
-            return this.disabled_cols.indexOf(j) >= 0;
+            return this.cols;
         }
 
-        getRowLabel(r : number) : number[]
+        getRowData(index : number) : RowData
         {
-            return this.rowLabels[r];
+            return this.rows[index];
         }
 
-        getColLabel(c : number) : number[]
+        getColData(index : number) : RowData
         {
-            return this.colLabels[c];
-        }
-
-        getRowLabelStatus(r : number) : RowStatus
-        {
-            return this.rowLabelStatus[r];
-        }
-
-        getColLabelStatus(c : number) : RowStatus
-        {
-            return this.colLabelStatus[c];
+            return this.cols[index];
         }
 
         isCompleted() : boolean
         {
-            return (all_el(this.rowLabelStatus, Utils.RowStatus.EQUAL) &&
-            all_el(this.colLabelStatus, Utils.RowStatus.EQUAL));
-        }
-
-        private _computeDisabledCols() : number[]
-        {
-            var ar : number[] = [];
-            this.colLabelStatus = [];
-            this.colLabels.forEach((label : number[], index : number) =>
-            {
-                if (Utils.PicrossTable._isLabelDisabled(label))
-                {
-                    ar.push(index);
-                    this.colLabelStatus.push(RowStatus.EQUAL);
-                }
-                else
-                    this.colLabelStatus.push(RowStatus.NOT_EQUAL);
-            });
-            return ar;
-        }
-
-        private _computeDisabledRows() : number[]
-        {
-            var ar : number[] = [];
-            this.rowLabelStatus = [];
-            this.rowLabels.forEach((label : number[], index : number) =>
-            {
-                if (Utils.PicrossTable._isLabelDisabled(label))
-                {
-                    ar.push(index);
-                    this.rowLabelStatus.push(RowStatus.EQUAL);
-                }
-                else
-                    this.rowLabelStatus.push(RowStatus.NOT_EQUAL);
-            });
-            return ar;
+            return (this.rows.every((data : RowData) => data.status == RowStatus.EQUAL) && this.cols.every((data : RowData) => data.status == RowStatus.EQUAL));
         }
 
         private static _isLabelDisabled(label : number[]) : boolean
@@ -225,12 +240,12 @@ module Utils
 
         updateRowStatus(r : number) : void
         {
-            this.rowLabelStatus[r] = Utils.PicrossTable._checkRow(this.rowLabels[r], this._checkRowStatus(r))
+            this.rows[r].status = Utils.PicrossTable._checkRow(this.rows[r].label, this._computeActualRowLabels(r));
         }
 
         updateColStatus(c : number) : void
         {
-            this.colLabelStatus[c] = Utils.PicrossTable._checkRow(this.colLabels[c], this._checkColStatus(c));
+            this.cols[c].status = Utils.PicrossTable._checkRow(this.cols[c].label, this._computeActualColLabels(c));
         }
 
         private static _checkRow(labels : number[], row : number[]) : RowStatus
@@ -247,9 +262,30 @@ module Utils
                     return RowStatus.NOT_EQUAL;
             return RowStatus.EQUAL;
         }
-    }
-    export function all_el<T>(array : T[], search_val : T) : boolean
-    {
-        return array.every((el) => el === search_val);
+
+        private setupData() : void
+        {
+            this.rows = [];
+            this.cols = [];
+
+            var params = [[this.rows, this.r, this._computeActualRowLabels.bind(this)],
+                [this.cols, this.c, this._computeActualColLabels.bind(this)]];
+
+            params.forEach(val =>
+                ((array : RowData[], len : number, fun : (number) => number[]) =>
+                {
+                    for (var i = 0; i < len; i++)
+                    {
+                        var label : number[] = fun(i);
+                        var disabled : boolean = PicrossTable._isLabelDisabled(label);
+
+                        array.push(<RowData>{
+                            label: label,
+                            disabled: disabled,
+                            status: disabled ? RowStatus.EQUAL : RowStatus.NOT_EQUAL
+                        });
+                    }
+                }).apply(this, val));
+        }
     }
 }

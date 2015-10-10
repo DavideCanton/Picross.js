@@ -16,17 +16,43 @@ var Utils;
     var RowStatus = Utils.RowStatus;
     var PicrossTable = (function () {
         function PicrossTable(data) {
-            this.r = data.rows;
-            this.c = data.cols;
-            this.rowLabels = data.rowLabels;
-            this.colLabels = data.colLabels;
-            this.table = new Array(this.r);
-            this.disabled_rows = this._computeDisabledRows();
-            this.disabled_cols = this._computeDisabledCols();
-            this.createEmptyTable();
+            if (data) {
+                this.r = data.rows;
+                this.c = data.cols;
+                this.rows = data.rowLabels.map(function (label) {
+                    var disabled = PicrossTable._isLabelDisabled(label);
+                    return {
+                        label: label,
+                        disabled: disabled,
+                        status: disabled ? 0 /* EQUAL */ : 2 /* NOT_EQUAL */
+                    };
+                });
+                this.cols = data.colLabels.map(function (label) {
+                    var disabled = PicrossTable._isLabelDisabled(label);
+                    return {
+                        label: label,
+                        disabled: disabled,
+                        status: disabled ? 0 /* EQUAL */ : 2 /* NOT_EQUAL */
+                    };
+                });
+                this.table = new Array(this.r);
+                this.createEmptyTable();
+            }
         }
+        PicrossTable.randomTable = function (r, c, percentage) {
+            var table = new PicrossTable(null);
+            table.r = r;
+            table.c = c;
+            table.createRandomTable(percentage);
+            table.setupData();
+            table.createEmptyTable();
+            return table;
+        };
         PicrossTable.prototype.getCellStatus = function (i, j) {
             return this.table[i][j];
+        };
+        PicrossTable.prototype.setCellStatus = function (i, j, status) {
+            this.table[i][j] = status;
         };
         PicrossTable.prototype.closeCell = function (i, j) {
             var status = this.getCellStatus(i, j);
@@ -56,18 +82,22 @@ var Utils;
                     break;
             }
         };
-        PicrossTable.prototype._checkRowStatus = function (r) {
+        PicrossTable.prototype._computeActualRowLabels = function (r) {
             var row = [];
             var incrementer = this.IncrementerFactory(row);
             for (var j = 0; j < this.c; j++)
                 incrementer(this.getCellStatus(r, j));
+            if (row.length == 0)
+                row = [0];
             return row;
         };
-        PicrossTable.prototype._checkColStatus = function (c) {
+        PicrossTable.prototype._computeActualColLabels = function (c) {
             var col = [];
             var incrementer = this.IncrementerFactory(col);
             for (var i = 0; i < this.r; i++)
                 incrementer(this.getCellStatus(i, c));
+            if (col.length == 0)
+                col = [0];
             return col;
         };
         PicrossTable.prototype.IncrementerFactory = function (res) {
@@ -85,76 +115,51 @@ var Utils;
                     currentBlock = false;
             };
         };
+        PicrossTable.prototype.createRandomTable = function (percentage) {
+            this.table = [];
+            for (var i = 0; i < this.r; i++) {
+                var row = new Array(this.c);
+                for (var j = 0; j < this.c; j++)
+                    row[j] = Math.random() <= percentage ? 1 /* CLOSED */ : 0 /* OPEN */;
+                this.table[i] = row;
+            }
+        };
         PicrossTable.prototype.createEmptyTable = function () {
             for (var i = 0; i < this.r; i++) {
                 var row = new Array(this.c);
-                var row_disabled = this.isRowDisabled(i);
+                var row_disabled = this.getRowData(i).disabled;
                 for (var j = 0; j < this.c; j++) {
                     if (row_disabled)
                         row[j] = 2 /* GRAYED */;
                     else
-                        row[j] = this.isColDisabled(j) ? 2 /* GRAYED */ : 0 /* OPEN */;
+                        row[j] = this.getColData(j).disabled ? 2 /* GRAYED */ : 0 /* OPEN */;
                 }
                 this.table[i] = row;
             }
         };
-        PicrossTable.prototype.isRowDisabled = function (i) {
-            return this.disabled_rows.indexOf(i) >= 0;
+        PicrossTable.prototype.getRowsData = function () {
+            return this.rows;
         };
-        PicrossTable.prototype.isColDisabled = function (j) {
-            return this.disabled_cols.indexOf(j) >= 0;
+        PicrossTable.prototype.getColsData = function () {
+            return this.cols;
         };
-        PicrossTable.prototype.getRowLabel = function (r) {
-            return this.rowLabels[r];
+        PicrossTable.prototype.getRowData = function (index) {
+            return this.rows[index];
         };
-        PicrossTable.prototype.getColLabel = function (c) {
-            return this.colLabels[c];
-        };
-        PicrossTable.prototype.getRowLabelStatus = function (r) {
-            return this.rowLabelStatus[r];
-        };
-        PicrossTable.prototype.getColLabelStatus = function (c) {
-            return this.colLabelStatus[c];
+        PicrossTable.prototype.getColData = function (index) {
+            return this.cols[index];
         };
         PicrossTable.prototype.isCompleted = function () {
-            return (all_el(this.rowLabelStatus, 0 /* EQUAL */) && all_el(this.colLabelStatus, 0 /* EQUAL */));
-        };
-        PicrossTable.prototype._computeDisabledCols = function () {
-            var _this = this;
-            var ar = [];
-            this.colLabelStatus = [];
-            this.colLabels.forEach(function (label, index) {
-                if (Utils.PicrossTable._isLabelDisabled(label)) {
-                    ar.push(index);
-                    _this.colLabelStatus.push(0 /* EQUAL */);
-                }
-                else
-                    _this.colLabelStatus.push(2 /* NOT_EQUAL */);
-            });
-            return ar;
-        };
-        PicrossTable.prototype._computeDisabledRows = function () {
-            var _this = this;
-            var ar = [];
-            this.rowLabelStatus = [];
-            this.rowLabels.forEach(function (label, index) {
-                if (Utils.PicrossTable._isLabelDisabled(label)) {
-                    ar.push(index);
-                    _this.rowLabelStatus.push(0 /* EQUAL */);
-                }
-                else
-                    _this.rowLabelStatus.push(2 /* NOT_EQUAL */);
-            });
-            return ar;
+            return (this.rows.every(function (data) { return data.status == 0 /* EQUAL */; }) && this.cols.every(function (data) { return data.status == 0 /* EQUAL */; }));
         };
         PicrossTable._isLabelDisabled = function (label) {
             return label.length == 1 && label[0] === 0;
         };
         PicrossTable.prototype.updateRowStatus = function (r) {
-            this.rowLabelStatus[r] = Utils.PicrossTable._checkRow(this.rowLabels[r], this._checkRowStatus(r));
+            this.rows[r].status = Utils.PicrossTable._checkRow(this.rows[r].label, this._computeActualRowLabels(r));
         };
         PicrossTable.prototype.updateColStatus = function (c) {
-            this.colLabelStatus[c] = Utils.PicrossTable._checkRow(this.colLabels[c], this._checkColStatus(c));
+            this.cols[c].status = Utils.PicrossTable._checkRow(this.cols[c].label, this._computeActualColLabels(c));
         };
         PicrossTable._checkRow = function (labels, row) {
             if (labels.length < row.length)
@@ -168,12 +173,25 @@ var Utils;
                     return 2 /* NOT_EQUAL */;
             return 0 /* EQUAL */;
         };
+        PicrossTable.prototype.setupData = function () {
+            var _this = this;
+            this.rows = [];
+            this.cols = [];
+            var params = [[this.rows, this.r, this._computeActualRowLabels.bind(this)], [this.cols, this.c, this._computeActualColLabels.bind(this)]];
+            params.forEach(function (val) { return (function (array, len, fun) {
+                for (var i = 0; i < len; i++) {
+                    var label = fun(i);
+                    var disabled = PicrossTable._isLabelDisabled(label);
+                    array.push({
+                        label: label,
+                        disabled: disabled,
+                        status: disabled ? 0 /* EQUAL */ : 2 /* NOT_EQUAL */
+                    });
+                }
+            }).apply(_this, val); });
+        };
         return PicrossTable;
     })();
     Utils.PicrossTable = PicrossTable;
-    function all_el(array, search_val) {
-        return array.every(function (el) { return el === search_val; });
-    }
-    Utils.all_el = all_el;
 })(Utils || (Utils = {}));
 //# sourceMappingURL=utils.js.map

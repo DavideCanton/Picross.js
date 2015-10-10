@@ -1,28 +1,19 @@
 ///<reference path="typings/angularjs/angular.d.ts"/>
 ///<reference path="typings/angularjs/angular-route.d.ts"/>
 ///<reference path="interfaces.ts"/>
-///<reference path="services.ts"/>
 ///<reference path="utils.ts"/>
 "use strict";
 var Controllers;
 (function (Controllers) {
     Controllers.controllers = angular.module('controllers', []);
     var PicrossCtrl = (function () {
-        function PicrossCtrl($scope, $routeParams, $location, Scheme) {
+        function PicrossCtrl($scope, $routeParams, $location) {
             this.$scope = $scope;
             this.$routeParams = $routeParams;
             this.$location = $location;
-            this.Scheme = Scheme;
-            $scope.schemeId = $routeParams.schemeId;
-            Scheme.get({ schemeID: $scope.schemeId }, function (data) {
-                $scope.table = new Utils.PicrossTable(data);
-                $scope.loaded = true;
-                $scope.$emit("loaded");
-            }, function () {
-                $scope.loaded = false;
-                $location.path("/error/404");
-                $scope.$emit("error", "404");
-            });
+            $scope.end = false;
+            $scope.table = Utils.PicrossTable.randomTable(+$routeParams.w, +$routeParams.h, +$routeParams.p);
+            $scope.loaded = true;
             $scope.range = function (n) {
                 var a = [];
                 for (var i = 0; i < n; i++)
@@ -34,79 +25,53 @@ var Controllers;
                 $scope.table.updateColStatus(c);
             };
             $scope.pressedCell = function (i, j) {
-                if ($scope.table.isRowDisabled(i) || $scope.table.isColDisabled(j))
+                if ($scope.end)
+                    return;
+                if ($scope.table.getRowData(i).disabled || $scope.table.getColData(j).disabled)
                     return;
                 $scope.table.closeCell(i, j);
                 $scope.updateEnabled(i, j);
                 if ($scope.table.isCompleted())
-                    $scope.$emit("end");
+                    $scope.end = true;
             };
             $scope.pressedRightCell = function (i, j) {
-                if ($scope.table.isRowDisabled(i) || $scope.table.isColDisabled(j))
+                if ($scope.end)
+                    return;
+                if ($scope.table.getRowData(i).disabled || $scope.table.getColData(j).disabled)
                     return;
                 $scope.table.grayCell(i, j);
                 $scope.updateEnabled(i, j);
             };
         }
-        PicrossCtrl.$inject = ["$scope", "$routeParams", "$location", "Scheme"];
+        PicrossCtrl.$inject = ["$scope", "$routeParams", "$location"];
         return PicrossCtrl;
     })();
     Controllers.PicrossCtrl = PicrossCtrl;
     var BodyController = (function () {
-        function BodyController($scope, $location, $route, Scheme) {
+        function BodyController($scope, $location, $route) {
             this.$scope = $scope;
             this.$location = $location;
             this.$route = $route;
-            this.Scheme = Scheme;
-            $scope.names = [];
+            $scope.rows = 5;
+            $scope.cols = 5;
             $scope.reset = function () {
                 $scope.errorMsg = "";
-                $scope.end = false;
                 $scope.error = false;
             };
+            $scope.goTo = function (w, h, event) {
+                if (event)
+                    event.preventDefault();
+                var p = 0.8;
+                $route.reload();
+                $location.search({ 'w': w || 5, 'h': h || 5, 'p': p }).path("/scheme");
+            };
             $scope.reset();
-            Scheme.query({}, function (data) {
-                $scope.names = data;
-            }, function (data, status) {
-                $scope.error = true;
-                $location.path("/error/" + status);
-            });
-            $scope.$on("end", function () {
-                console.log("end");
-                $scope.end = true;
-            });
             $scope.$on("error", function (event, status) {
                 $scope.error = true;
                 $location.path("/error/" + status);
             });
-            $scope.$on("loaded", function (event) {
-                var childScope = event.targetScope;
-                $scope.current = parseInt(childScope.schemeId) - 1;
-            });
-            $scope.next = function (i) {
-                return (i + 1) % $scope.names.length;
-            };
-            $scope.previous = function (i) {
-                return (i - 1 + $scope.names.length) % $scope.names.length;
-            };
-            $scope.increase = function () {
-                $scope.reset();
-                $scope.current = $scope.next($scope.current);
-                $route.updateParams({ 'schemeId': $scope.names[$scope.current].id });
-            };
-            $scope.decrease = function () {
-                $scope.reset();
-                $scope.current = $scope.previous($scope.current);
-                $route.updateParams({ 'schemeId': $scope.names[$scope.current].id });
-            };
-            $scope.reload_route = function () {
-                if (confirm("Sei sicuro?")) {
-                    $scope.reset();
-                    $route.reload();
-                }
-            };
         }
-        BodyController.$inject = ["$scope", "$location", "$route", "Scheme"];
+        BodyController.$inject = ["$scope", "$location", "$route"];
         return BodyController;
     })();
     Controllers.BodyController = BodyController;

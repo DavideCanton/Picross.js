@@ -6,22 +6,21 @@ module PicrossApp
 {
     "use strict";
 
-    export var app : ng.IModule = angular.module("picrossApp", ['ngRoute', 'controllers',
-        'filters', 'services', 'directives']);
+    export var app : ng.IModule = angular.module("picrossApp", ['ngRoute', 'controllers', 'directives']);
 
     app.config(['$routeProvider',
         ($routeProvider : ng.route.IRouteProvider) =>
         {
             $routeProvider.
-                when('/scheme/:schemeId', {
+                when('/', {}).
+                when('/scheme', {
                     templateUrl: 'partials/show_picross.html',
                     controller: 'picrossCtrl'
                 }).
                 when('/error/:status', {
                     templateUrl: 'partials/error_page.html',
                     controller: 'errorCtrl'
-                });
-
-            $routeProvider.otherwise("/scheme/1");
+                }).
+                otherwise("/error/404");
         }]);
 }

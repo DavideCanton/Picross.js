@@ -1,33 +1,37 @@
 <div id="content" ng-controller="picrossCtrl">
-    <table id="picrossTable" ng-show="loaded">
+    <table id="picrossTable" ng-show="loaded" ng-class="{'completed': end}"
+           onselectstart="return false" ondragstart="return false">
         <!-- column labels -->
         <tr>
             <td class="row-label"></td>
-            <td ng-repeat="colIndex in range(table.c)" class="col-label">
-                <div ng-repeat="val in table.getColLabel(colIndex) track by $index" class="col-label-cell"
-                     ng-class="table.getColLabelStatus(colIndex) | labelClass">
+            <td ng-repeat="colData in table.getColsData()" class="col-label">
+                <div ng-repeat="val in colData.label track by $index"
+                     class="col-label-cell"
+                     label-class="colData.status">
                     {{ val }}
                 </div>
             </td>
         </tr>
 
-        <tr ng-repeat="rowIndex in range(table.r)">
+        <tr ng-repeat="rowData in table.getRowsData() track by $index">
             <!-- row labels -->
             <td class="row-label">
-                <div ng-repeat="val in table.getRowLabel(rowIndex) | reverse track by $index"
-                     ng-class="table.getRowLabelStatus(rowIndex) | labelClass"
+                <div ng-repeat="val in rowData.label track by $index"
+                     label-class="rowData.status"
                      class="row-label-cell">
                     {{ val }}
                 </div>
             </td>
 
-            <td class="cell cell-border"
-                ng_repeat="colIndex in range(table.c)"
-                ng-class="table.getCellStatus(rowIndex, colIndex) | cellClass"
-                ng-click="pressedCell(rowIndex, colIndex)"
-                ng-right-click="pressedRightCell(rowIndex, colIndex)">
+            <td cell-td
+                data-row="$parent.$index"
+                data-col="colIndex"
+                data-onclick="pressedCell(row, col)"
+                data-onrightclick="pressedRightCell(row, col)"
+                data-val="table.getCellStatus(row, col)"
+                ng-repeat="colIndex in range(table.c)"
+                class="cell cell-border internal-cell">
             </td>
         </tr>
     </table>
-
 </div>

@@ -1,0 +1,22 @@
+<div class="text-center">
+    <h1>Picross!</h1>
+</div>
+
+<div class="container">
+    <div class="row">
+        <form class="col-sm-12 form-inline" id="main-form">
+            <input class="form-control" id="rows" type="number" placeholder="Rows" [(ngModel)]="rows">
+            <span>&times;</span>
+            <input class="form-control" id="cols" type="number" placeholder="Cols" [(ngModel)]="cols">
+            <button type="submit" (click)="goTo($event)" class="btn btn-success">
+                <span class="glyphicon glyphicon-refresh"></span>&nbsp;Random
+            </button>
+            <button type="button" (click)="clearTable()" class="btn btn-danger">
+                <span class="glyphicon glyphicon-trash"></span>&nbsp;Clear
+            </button>
+        </form>
+    </div>
+</div>
+
+<div id="overlay" [hidden]="!waiting"></div>
+<router-outlet></router-outlet>

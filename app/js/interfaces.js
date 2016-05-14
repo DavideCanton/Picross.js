@@ -1,5 +1,10 @@
-///<reference path="typings/angularjs/angular.d.ts"/>
-///<reference path="typings/angularjs/angular-resource.d.ts"/>
-///<reference path="typings/angularjs/angular-route.d.ts"/>
-///<reference path="utils.ts"/>
+System.register([], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters:[],
+        execute: function() {
+        }
+    }
+});
 //# sourceMappingURL=interfaces.js.map

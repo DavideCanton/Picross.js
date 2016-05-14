@@ -1,0 +1,29 @@
+<div id="content">
+    <table id="picrossTable" [hidden]="!loaded" [class.completed]="end"
+           onselectstart="return false" ondragstart="return false" (mouseleave)="disablePressing()">
+        <!-- column labels -->
+        <tr>
+            <td class="row-label"></td>
+            <td *ngFor="let colData of getColsData()" class="col-label">
+                <span picross-label *ngFor="let val of colData.label"
+                               [labelClass]="'col-label-cell'"
+                               [text]="val"
+                               [status]="colData.status">
+                </span>
+            </td>
+        </tr>
+
+        <tr *ngFor="let rowData of getRowsData(); let r = index">
+            <!-- row labels -->
+            <td class="row-label">
+                <span picross-label *ngFor="let val of rowData.label"
+                               [labelClass]="'row-label-cell'"
+                               [text]="val"
+                               [status]="rowData.status">
+                </span>
+            </td>
+
+            <td picross-cell [row]="r" [col]="c" *ngFor="let colIndex of range(cols); let c = index"></td>
+        </tr>
+    </table>
+</div>

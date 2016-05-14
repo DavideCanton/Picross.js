@@ -1,2 +1,2 @@
 # Picross.js
-Picross web app written with AngularJS + Bootstrap
+Picross web app written with Angular 2 + Bootstrap

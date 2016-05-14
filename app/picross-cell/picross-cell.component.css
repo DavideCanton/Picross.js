@@ -1,0 +1,21 @@
+.cell {
+  width: 50px;
+  height: 50px;
+  font-family: cursive; }
+
+.cell-border {
+  border: 1px solid black; }
+
+#picrossTable.completed .internal-cell.fill {
+  background-color: green; }
+#picrossTable.completed .internal-cell.crossed {
+  background-color: transparent; }
+#picrossTable .internal-cell {
+  cursor: pointer;
+  transition: background-color .2s; }
+  #picrossTable .internal-cell.fill {
+    background-color: black; }
+  #picrossTable .internal-cell.crossed {
+    background-color: grey; }
+
+/*# sourceMappingURL=picross-cell.component.css.map */

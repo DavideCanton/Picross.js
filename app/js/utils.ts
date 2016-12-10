@@ -7,14 +7,14 @@ interface CheckFunc
     (CellStatus) : void;
 }
 
-export enum CellStatus
+export const enum CellStatus
 {
     OPEN,
     CLOSED,
     GRAYED
 }
 
-export enum RowStatus
+export const enum RowStatus
 {
     EQUAL,
     WRONG,
@@ -277,8 +277,8 @@ export class PicrossTable
             {
                 for (let i = 0; i < len; i++)
                 {
-                    let label : number[] = fun(i);
-                    let disabled : boolean = PicrossTable._isLabelDisabled(label);
+                    let label = fun(i);
+                    let disabled = PicrossTable._isLabelDisabled(label);
 
                     array.push(<RowData>{
                         label: label,
@@ -291,12 +291,12 @@ export class PicrossTable
 
     clear()
     {
-        _.each(this.table, (row, i) =>
+        this.table.forEach((row, i) =>
         {
             if (this.rows[i].disabled)
                 return;
 
-            _.each(row, (_, j) =>
+            row.forEach((_, j) =>
             {
                 if (this.cols[j].disabled)
                     return;

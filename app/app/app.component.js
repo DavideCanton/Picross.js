@@ -37,19 +37,21 @@ System.register(["angular2/core", "../picross/picross.component", "../js/tableSe
                 AppComponent.prototype.ngOnInit = function () {
                     this.rows = 5;
                     this.cols = 5;
+                    this.hash = 0;
                 };
                 AppComponent.prototype.reset = function () {
                     this.errorMsg = "";
                     this.error = false;
                 };
-                AppComponent.prototype.goTo = function (event) {
+                AppComponent.prototype.generateSchema = function (event) {
                     if (event)
                         event.preventDefault();
-                    var params = _.assign({ w: 5, h: 5 }, { w: this.rows, h: this.cols });
-                    //this.waiting = true;
-                    this.router.navigate(['Scheme', { w: params.w, h: params.h }]);
+                    var _a = { w: this.rows, h: this.cols }, _b = _a.w, w = _b === void 0 ? 5 : _b, _c = _a.h, h = _c === void 0 ? 5 : _c;
+                    this.router.navigate(['Scheme', { w: w, h: h, t: this.hash }]);
+                    ++this.hash;
                 };
                 AppComponent.prototype.clearTable = function () {
+                    var _this = this;
                     swal({
                         title: "Attenzione!",
                         text: "Perderai i tuoi progressi! Sei sicuro?",
@@ -58,7 +60,7 @@ System.register(["angular2/core", "../picross/picross.component", "../js/tableSe
                         closeOnConfirm: true
                     }, function (isOk) {
                         if (isOk)
-                            this.tableService.clearTable();
+                            _this.tableService.clearTable();
                     });
                 };
                 AppComponent = __decorate([

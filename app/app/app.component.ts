@@ -24,6 +24,8 @@ export class AppComponent implements OnInit
     rows : number;
     cols : number;
 
+    private hash: number;
+
     constructor(private router : Router, private tableService : TableService)
     {
         this.waiting = false;
@@ -35,6 +37,7 @@ export class AppComponent implements OnInit
     {
         this.rows = 5;
         this.cols = 5;
+        this.hash = 0;
     }
 
     reset()
@@ -43,15 +46,16 @@ export class AppComponent implements OnInit
         this.error = false;
     }
 
-    goTo(event : MouseEvent)
+    generateSchema(event : MouseEvent)
     {
         if (event)
             event.preventDefault();
 
-        var params : any = _.assign({w: 5, h: 5}, {w: this.rows, h: this.cols});
+        let {w = 5, h = 5} = {w: this.rows, h: this.cols };
 
-        //this.waiting = true;
-        this.router.navigate(['Scheme', {w: params.w, h: params.h}]);
+        this.router.navigate(['Scheme', {w: w, h: h, t: this.hash}]);
+
+        ++this.hash;
     }
 
     clearTable()
@@ -62,7 +66,7 @@ export class AppComponent implements OnInit
             type: "warning",
             showCancelButton: true,
             closeOnConfirm: true
-        }, function (isOk)
+        }, isOk =>
         {
             if (isOk)
                 this.tableService.clearTable();

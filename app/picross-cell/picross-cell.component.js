@@ -1,4 +1,4 @@
-System.register(["angular2/core", "../js/tableService", "../js/utils"], function(exports_1, context_1) {
+System.register(["angular2/core", "../js/tableService"], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,7 +10,7 @@ System.register(["angular2/core", "../js/tableService", "../js/utils"], function
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, tableService_1, utils_1;
+    var core_1, tableService_1;
     var PicrossCellComponent;
     return {
         setters:[
@@ -19,9 +19,6 @@ System.register(["angular2/core", "../js/tableService", "../js/utils"], function
             },
             function (tableService_1_1) {
                 tableService_1 = tableService_1_1;
-            },
-            function (utils_1_1) {
-                utils_1 = utils_1_1;
             }],
         execute: function() {
             PicrossCellComponent = (function () {
@@ -37,14 +34,14 @@ System.register(["angular2/core", "../js/tableService", "../js/utils"], function
                 });
                 Object.defineProperty(PicrossCellComponent.prototype, "isClosed", {
                     get: function () {
-                        return this.status === utils_1.CellStatus.CLOSED;
+                        return this.status === 1 /* CLOSED */;
                     },
                     enumerable: true,
                     configurable: true
                 });
                 Object.defineProperty(PicrossCellComponent.prototype, "isGrayed", {
                     get: function () {
-                        return this.status === utils_1.CellStatus.GRAYED;
+                        return this.status === 2 /* GRAYED */;
                     },
                     enumerable: true,
                     configurable: true

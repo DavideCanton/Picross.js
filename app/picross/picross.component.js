@@ -33,12 +33,15 @@ System.register(["angular2/core", "angular2/router", "../js/tableService", "../p
             PicrossComponent = (function () {
                 function PicrossComponent(params, tableService) {
                     this.tableService = tableService;
-                    this.rows = +params.get("w") || 5;
-                    this.cols = +params.get("h") || 5;
+                    this.rows = parseInt(params.get("w"), 10);
+                    this.cols = parseInt(params.get("h"), 10);
+                    if (!this.rows || isNaN(this.rows))
+                        this.rows = 5;
+                    if (!this.cols || isNaN(this.cols))
+                        this.cols = 5;
                 }
                 PicrossComponent.prototype.ngOnInit = function () {
                     this.tableService.initTable(this.rows, this.cols);
-                    this.loaded = true;
                 };
                 Object.defineProperty(PicrossComponent.prototype, "end", {
                     get: function () {

@@ -1,7 +1,0 @@
-{
-"version": 3,
-"mappings": "AAAA,uCACA;EACI,KAAK,EAAE,IAAI;EACX,MAAM,EAAE,IAAI;EACZ,WAAW,EAAE,OAAO;;AAGxB,eACA;EAEI,OAAO,EAAE,YAAY;EACrB,UAAU,EAAE,MAAM;;AAGtB,eACA;EACI,KAAK,EAAE,IAAI;;AAGf,YACA;EACI,KAAK,EAAE,GAAG;;AAGd,eACA",
-"sources": ["picross-label.component.scss"],
-"names": [],
-"file": "picross-label.component.css"
-}

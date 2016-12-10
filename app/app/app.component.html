@@ -8,7 +8,7 @@
             <input class="form-control" id="rows" type="number" placeholder="Rows" [(ngModel)]="rows">
             <span>&times;</span>
             <input class="form-control" id="cols" type="number" placeholder="Cols" [(ngModel)]="cols">
-            <button type="submit" (click)="goTo($event)" class="btn btn-success">
+            <button type="submit" (click)="generateSchema($event)" class="btn btn-success">
                 <span class="glyphicon glyphicon-refresh"></span>&nbsp;Random
             </button>
             <button type="button" (click)="clearTable()" class="btn btn-danger">
@@ -18,5 +18,5 @@
     </div>
 </div>
 
-<div id="overlay" [hidden]="!waiting"></div>
+<div id="overlay" style="display: none"></div>
 <router-outlet></router-outlet>

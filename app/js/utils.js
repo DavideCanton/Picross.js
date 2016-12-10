@@ -1,22 +1,10 @@
 System.register([], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var CellStatus, RowStatus, PicrossTable;
+    var PicrossTable;
     return {
         setters:[],
         execute: function() {
-            (function (CellStatus) {
-                CellStatus[CellStatus["OPEN"] = 0] = "OPEN";
-                CellStatus[CellStatus["CLOSED"] = 1] = "CLOSED";
-                CellStatus[CellStatus["GRAYED"] = 2] = "GRAYED";
-            })(CellStatus || (CellStatus = {}));
-            exports_1("CellStatus", CellStatus);
-            (function (RowStatus) {
-                RowStatus[RowStatus["EQUAL"] = 0] = "EQUAL";
-                RowStatus[RowStatus["WRONG"] = 1] = "WRONG";
-                RowStatus[RowStatus["NOT_EQUAL"] = 2] = "NOT_EQUAL";
-            })(RowStatus || (RowStatus = {}));
-            exports_1("RowStatus", RowStatus);
             PicrossTable = (function () {
                 function PicrossTable(data) {
                     if (data) {
@@ -27,7 +15,7 @@ System.register([], function(exports_1, context_1) {
                             return {
                                 label: label,
                                 disabled: disabled,
-                                status: disabled ? RowStatus.EQUAL : RowStatus.NOT_EQUAL
+                                status: disabled ? 0 /* EQUAL */ : 2 /* NOT_EQUAL */
                             };
                         });
                         this.cols = data.colLabels.map(function (label) {
@@ -35,7 +23,7 @@ System.register([], function(exports_1, context_1) {
                             return {
                                 label: label,
                                 disabled: disabled,
-                                status: disabled ? RowStatus.EQUAL : RowStatus.NOT_EQUAL
+                                status: disabled ? 0 /* EQUAL */ : 2 /* NOT_EQUAL */
                             };
                         });
                         this.table = new Array(this.r);
@@ -60,28 +48,28 @@ System.register([], function(exports_1, context_1) {
                 PicrossTable.prototype.closeCell = function (i, j) {
                     var status = this.getCellStatus(i, j);
                     switch (status) {
-                        case CellStatus.CLOSED:
-                            this.table[i][j] = CellStatus.OPEN;
+                        case 1 /* CLOSED */:
+                            this.table[i][j] = 0 /* OPEN */;
                             break;
-                        case CellStatus.OPEN:
-                            this.table[i][j] = CellStatus.CLOSED;
+                        case 0 /* OPEN */:
+                            this.table[i][j] = 1 /* CLOSED */;
                             break;
-                        case CellStatus.GRAYED:
-                            this.table[i][j] = CellStatus.OPEN;
+                        case 2 /* GRAYED */:
+                            this.table[i][j] = 0 /* OPEN */;
                             break;
                     }
                 };
                 PicrossTable.prototype.grayCell = function (i, j) {
                     var status = this.getCellStatus(i, j);
                     switch (status) {
-                        case CellStatus.CLOSED:
-                            this.table[i][j] = CellStatus.GRAYED;
+                        case 1 /* CLOSED */:
+                            this.table[i][j] = 2 /* GRAYED */;
                             break;
-                        case CellStatus.OPEN:
-                            this.table[i][j] = CellStatus.GRAYED;
+                        case 0 /* OPEN */:
+                            this.table[i][j] = 2 /* GRAYED */;
                             break;
-                        case CellStatus.GRAYED:
-                            this.table[i][j] = CellStatus.OPEN;
+                        case 2 /* GRAYED */:
+                            this.table[i][j] = 0 /* OPEN */;
                             break;
                     }
                 };
@@ -106,7 +94,7 @@ System.register([], function(exports_1, context_1) {
                 PicrossTable.prototype.IncrementerFactory = function (res) {
                     var currentBlock = false;
                     return function (status) {
-                        if (status === CellStatus.CLOSED) {
+                        if (status === 1 /* CLOSED */) {
                             if (!currentBlock) {
                                 res.push(1);
                                 currentBlock = true;
@@ -123,7 +111,7 @@ System.register([], function(exports_1, context_1) {
                     for (var i = 0; i < this.r; i++) {
                         var row = new Array(this.c);
                         for (var j = 0; j < this.c; j++)
-                            row[j] = Math.random() <= percentage ? CellStatus.CLOSED : CellStatus.OPEN;
+                            row[j] = Math.random() <= percentage ? 1 /* CLOSED */ : 0 /* OPEN */;
                         this.table[i] = row;
                     }
                 };
@@ -133,9 +121,9 @@ System.register([], function(exports_1, context_1) {
                         var row_disabled = this.getRowData(i).disabled;
                         for (var j = 0; j < this.c; j++) {
                             if (row_disabled)
-                                row[j] = CellStatus.GRAYED;
+                                row[j] = 2 /* GRAYED */;
                             else
-                                row[j] = this.getColData(j).disabled ? CellStatus.GRAYED : CellStatus.OPEN;
+                                row[j] = this.getColData(j).disabled ? 2 /* GRAYED */ : 0 /* OPEN */;
                         }
                         this.table[i] = row;
                     }
@@ -153,8 +141,8 @@ System.register([], function(exports_1, context_1) {
                     return this.cols[index];
                 };
                 PicrossTable.prototype.isCompleted = function () {
-                    return (this.rows.every(function (data) { return data.status == RowStatus.EQUAL; }) &&
-                        this.cols.every(function (data) { return data.status == RowStatus.EQUAL; }));
+                    return (this.rows.every(function (data) { return data.status == 0 /* EQUAL */; }) &&
+                        this.cols.every(function (data) { return data.status == 0 /* EQUAL */; }));
                 };
                 PicrossTable._isLabelDisabled = function (label) {
                     return label.length == 1 && label[0] === 0;
@@ -167,15 +155,15 @@ System.register([], function(exports_1, context_1) {
                 };
                 PicrossTable._checkRow = function (labels, row) {
                     if (labels.length < row.length)
-                        return RowStatus.WRONG;
+                        return 1 /* WRONG */;
                     else if (labels.length > row.length)
-                        return RowStatus.NOT_EQUAL;
+                        return 2 /* NOT_EQUAL */;
                     for (var i = 0; i < labels.length; i++)
                         if (labels[i] < row[i])
-                            return RowStatus.WRONG;
+                            return 1 /* WRONG */;
                         else if (labels[i] > row[i])
-                            return RowStatus.NOT_EQUAL;
-                    return RowStatus.EQUAL;
+                            return 2 /* NOT_EQUAL */;
+                    return 0 /* EQUAL */;
                 };
                 PicrossTable.prototype.setupData = function () {
                     var _this = this;
@@ -193,7 +181,7 @@ System.register([], function(exports_1, context_1) {
                                 array.push({
                                     label: label,
                                     disabled: disabled,
-                                    status: disabled ? RowStatus.EQUAL : RowStatus.NOT_EQUAL
+                                    status: disabled ? 0 /* EQUAL */ : 2 /* NOT_EQUAL */
                                 });
                             }
                         }).apply(_this, val);
@@ -201,16 +189,16 @@ System.register([], function(exports_1, context_1) {
                 };
                 PicrossTable.prototype.clear = function () {
                     var _this = this;
-                    _.each(this.table, function (row, i) {
+                    this.table.forEach(function (row, i) {
                         if (_this.rows[i].disabled)
                             return;
-                        _.each(row, function (_, j) {
+                        row.forEach(function (_, j) {
                             if (_this.cols[j].disabled)
                                 return;
-                            row[j] = CellStatus.OPEN;
-                            _this.cols[j].status = RowStatus.NOT_EQUAL;
+                            row[j] = 0 /* OPEN */;
+                            _this.cols[j].status = 2 /* NOT_EQUAL */;
                         });
-                        _this.rows[i].status = RowStatus.NOT_EQUAL;
+                        _this.rows[i].status = 2 /* NOT_EQUAL */;
                     });
                 };
                 return PicrossTable;

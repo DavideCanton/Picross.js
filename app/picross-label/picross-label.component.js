@@ -1,4 +1,4 @@
-System.register(["angular2/core", "../js/utils"], function(exports_1, context_1) {
+System.register(["angular2/core"], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,15 +10,12 @@ System.register(["angular2/core", "../js/utils"], function(exports_1, context_1)
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, utils_1;
+    var core_1;
     var PicrossLabelComponent;
     return {
         setters:[
             function (core_1_1) {
                 core_1 = core_1_1;
-            },
-            function (utils_1_1) {
-                utils_1 = utils_1_1;
             }],
         execute: function() {
             PicrossLabelComponent = (function () {
@@ -26,14 +23,14 @@ System.register(["angular2/core", "../js/utils"], function(exports_1, context_1)
                 }
                 Object.defineProperty(PicrossLabelComponent.prototype, "isEqual", {
                     get: function () {
-                        return this.status === utils_1.RowStatus.EQUAL;
+                        return this.status === 0 /* EQUAL */;
                     },
                     enumerable: true,
                     configurable: true
                 });
                 Object.defineProperty(PicrossLabelComponent.prototype, "isWrong", {
                     get: function () {
-                        return this.status === utils_1.RowStatus.WRONG;
+                        return this.status === 1 /* WRONG */;
                     },
                     enumerable: true,
                     configurable: true

@@ -13,21 +13,25 @@ import {PicrossLabelComponent} from "../picross-label/picross-label.component";
 })
 export class PicrossComponent implements OnInit
 {
-    loaded : boolean;
     pressing : CellStatus;
     rows : number;
     cols : number;
 
     constructor(params : RouteParams, private tableService : TableService)
     {
-        this.rows = +params.get("w") || 5;
-        this.cols = +params.get("h") || 5;
+        this.rows = parseInt(params.get("w"), 10);
+        this.cols = parseInt(params.get("h"), 10);
+
+        if(!this.rows || isNaN(this.rows))
+            this.rows = 5;
+
+        if(!this.cols || isNaN(this.cols))
+            this.cols = 5;
     }
 
     ngOnInit()
     {
         this.tableService.initTable(this.rows, this.cols);
-        this.loaded = true;
     }
     
     get end() : boolean

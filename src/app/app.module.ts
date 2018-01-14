@@ -8,6 +8,7 @@ import { PicrossComponent } from './picross/picross.component';
 import { PicrossCellComponent } from './picross-cell/picross-cell.component';
 import { PicrossLabelComponent } from './picross-label/picross-label.component';
 import { TableService } from './js/table.service';
+import { TimerComponent } from './timer/timer.component';
 
 
 @NgModule({
@@ -15,7 +16,8 @@ import { TableService } from './js/table.service';
     AppComponent,
     PicrossComponent,
     PicrossCellComponent,
-    PicrossLabelComponent
+    PicrossLabelComponent,
+    TimerComponent
   ],
   imports: [
     BrowserModule,

@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { TableService } from "../js/table.service";
 import { CellStatus, RowData } from "../js/utils";
 import * as _ from 'lodash';
@@ -9,14 +9,20 @@ import { ActivatedRoute } from "@angular/router";
     templateUrl: './picross.component.html',
     styleUrls: ['./picross.component.scss']
 })
-export class PicrossComponent {
+export class PicrossComponent implements OnInit {
     pressing: CellStatus;
     rows: number;
     cols: number;
     initialized: boolean;
+    end: boolean;
 
     constructor(private tableService: TableService) {
+    }
+
+    ngOnInit(): void {
         this.initialized = false;
+
+        this.tableService.isCompleted.subscribe(v => this.end = v);
     }
 
     start(rows: number, cols: number) {
@@ -25,10 +31,6 @@ export class PicrossComponent {
         this.initialized = true;
 
         this.tableService.initTable(this.rows, this.cols);
-    }
-
-    get end(): boolean {
-        return this.tableService.isCompleted;
     }
 
     range(limit: number): number[] {

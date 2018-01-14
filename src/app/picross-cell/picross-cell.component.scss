@@ -38,6 +38,14 @@
         &.crossed
         {
             background-color: grey;
+        
+            &:before {
+                content: "X";
+                font-size: 46px;
+                color: #646464;
+                line-height: 47px;
+                font-family: monospace;
+            }
         }
     }
 }

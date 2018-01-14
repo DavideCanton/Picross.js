@@ -1,5 +1,6 @@
 import {Injectable} from "@angular/core";
 import {PicrossTable, CellStatus, RowData} from "../js/utils";
+import { Observable, Subject } from "rxjs/Rx";
 
 export interface JSONSchemeData
 {
@@ -13,13 +14,16 @@ export interface JSONSchemeData
 export class TableService
 {
     private table : PicrossTable;
-    private end : boolean;
+    private _end : Subject<boolean>;
+    private end: boolean;
     private pressing : CellStatus;
 
     constructor()
     {
         this.table = null;
         this.pressing = null;
+        this._end = new Subject();
+        this._end.subscribe(v => this.end = v);
     }
 
     setPressing(pressing : CellStatus)
@@ -35,7 +39,7 @@ export class TableService
     initTable(row : number, col : number)
     {
         this.table = PicrossTable.randomTable(row, col, 0.8);
-        this.end = false;
+        this._end.next(false);
     }
 
     private updateEnabled(r : number, c : number)
@@ -53,6 +57,7 @@ export class TableService
     {
         if (this.end)
             return;
+
         if (this.table.getRowData(i).disabled || this.table.getColData(j).disabled)
             return;
 
@@ -60,12 +65,12 @@ export class TableService
         this.updateEnabled(i, j);
 
         if (this.table.isCompleted())
-            this.end = true;
+            this._end.next(true);
     }
 
-    get isCompleted() : boolean
+    get isCompleted() : Observable<boolean>
     {
-        return this.end;
+        return this._end.asObservable();
     }
 
     pressedCell(i : number, j : number)
@@ -79,9 +84,8 @@ export class TableService
         this.updateEnabled(i, j);
 
         if (this.table.isCompleted())
-            this.end = true;
+            this._end.next(true);
     }
-
 
     pressedRightCell(i : number, j : number)
     {

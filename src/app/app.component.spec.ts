@@ -5,7 +5,7 @@ import { APP_BASE_HREF } from '@angular/common';
 
 describe('AppComponent', () => {
   beforeEach(async(() => {
-    TestBed.configureTestingModule({      
+    TestBed.configureTestingModule({
       imports: [
         AppModule
       ],
@@ -23,7 +23,7 @@ describe('AppComponent', () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.debugElement.componentInstance;
     expect(app).toBeTruthy();
-  
+
     fixture.detectChanges();
   }));
 });

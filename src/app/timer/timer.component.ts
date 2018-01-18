@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs/Rx';
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/interval';
 
 @Component({
   selector: 'timer',
@@ -16,8 +17,9 @@ export class TimerComponent implements OnInit {
   ngOnInit(): void {
     this.timer = Observable.interval(1000);
     this.timer.subscribe(_ => {
-      if (this._isRunning)
+      if (this._isRunning) {
         ++this.time;
+      }
     });
     this.time = 0;
   }
@@ -32,12 +34,12 @@ export class TimerComponent implements OnInit {
   }
 
   get minutes(): string {
-    let val = Math.floor(this.time / 60);
+    const val = Math.floor(this.time / 60);
     return TimerComponent.pad(val, 2);
   }
 
   get seconds(): string {
-    let val = Math.floor(this.time % 60);
+    const val = Math.floor(this.time % 60);
     return TimerComponent.pad(val, 2);
   }
 
@@ -45,10 +47,11 @@ export class TimerComponent implements OnInit {
     return this._isRunning;
   }
 
+  // tslint:disable-next-line:member-ordering
   static pad(v: number, size: number): string {
     let s = String(v);
     while (s.length < (size || 2)) {
-      s = "0" + s;
+      s = '0' + s;
     }
     return s;
   }

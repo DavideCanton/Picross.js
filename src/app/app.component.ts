@@ -1,12 +1,13 @@
-import { Component } from "@angular/core";
-import { PicrossComponent } from "./picross/picross.component";
-import { TableService } from "./js/table.service";
-import { Router } from "@angular/router";
-import { ViewChild } from "@angular/core";
-import * as swal from "sweetalert2";
-import { Observable } from 'rxjs/Rx'
-import { OnInit } from "@angular/core";
-import { TimerComponent } from "./timer/timer.component";
+import { Component } from '@angular/core';
+import { PicrossComponent } from './picross/picross.component';
+import { TableService } from './js/table.service';
+import { Router } from '@angular/router';
+import { ViewChild } from '@angular/core';
+import * as swal from 'sweetalert2';
+import { OnInit } from '@angular/core';
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/operator/filter';
+import { TimerComponent } from './timer/timer.component';
 
 @Component({
     selector: 'app',
@@ -43,9 +44,9 @@ export class AppComponent implements OnInit {
 
     clearTable() {
         swal.default({
-            title: "Attenzione!",
-            text: "Perderai i tuoi progressi! Sei sicuro?",
-            type: "warning",
+            title: 'Attenzione!',
+            text: 'Perderai i tuoi progressi! Sei sicuro?',
+            type: 'warning',
             showCancelButton: true
         }).then(result => {
             if (result.value)

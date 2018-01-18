@@ -1,8 +1,8 @@
-import { Component, OnInit } from "@angular/core";
-import { TableService } from "../js/table.service";
-import { CellStatus, RowData } from "../js/utils";
+import { Component, OnInit } from '@angular/core';
+import { TableService } from '../js/table.service';
+import { CellStatus, RowData } from '../js/utils';
 import * as _ from 'lodash';
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'picross-component',

@@ -22,7 +22,7 @@ import { TimerComponent } from './timer/timer.component';
   imports: [
     BrowserModule,
     FormsModule,
-    AppRoutingModule    
+    AppRoutingModule
   ],
   providers: [TableService],
   bootstrap: [AppComponent]

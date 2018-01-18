@@ -1,5 +1,5 @@
-import {Component, Input, ViewEncapsulation} from "@angular/core";
-import {RowStatus} from "../js/utils";
+import {Component, Input, ViewEncapsulation} from '@angular/core';
+import {RowStatus} from '../js/utils';
 
 @Component({
     selector: 'picross-label',
@@ -7,10 +7,9 @@ import {RowStatus} from "../js/utils";
     styleUrls: ['./picross-label.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
-export class PicrossLabelComponent
-{
+export class PicrossLabelComponent {
     @Input()
-    status : RowStatus;
+    status: RowStatus;
 
     @Input()
     labelClass: string;
@@ -18,17 +17,14 @@ export class PicrossLabelComponent
     @Input()
     text: string;
 
-    constructor()
-    {
+    constructor() {
     }
 
-    get isEqual() : boolean
-    {
+    get isEqual(): boolean {
         return this.status === RowStatus.EQUAL;
     }
 
-    get isWrong() : boolean
-    {
+    get isWrong(): boolean {
         return this.status === RowStatus.WRONG;
     }
 }

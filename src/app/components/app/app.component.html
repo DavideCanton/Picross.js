@@ -1,0 +1,29 @@
+<div class="text-center">
+    <h1>Picross!</h1>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 text-right">
+            <button type="button" class="btn" *ngFor="let c of CHOICES" (click)="rows = c" [class.btn-primary]="c == rows">{{ c }}</button>
+            &times;
+            <button type="button" class="btn" *ngFor="let c of CHOICES" (click)="cols = c" [class.btn-primary]="c == cols">{{ c }}</button>
+        </div>
+        <div class="col-md-6">
+            <button type="submit" (click)="generateSchema()" class="btn btn-success">
+                <span class="glyphicon glyphicon-refresh"></span>&nbsp;Random
+            </button>
+            <button type="button" (click)="clearTable()" class="btn btn-danger">
+                <span class="glyphicon glyphicon-trash"></span>&nbsp;Clear
+            </button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <timer></timer>
+        </div>
+    </div>
+</div>
+
+<div id="overlay" style="display: none"></div>
+<picross-component (endTable)="endTable()"></picross-component>

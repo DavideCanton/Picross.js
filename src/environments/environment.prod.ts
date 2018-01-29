@@ -1,4 +1,5 @@
+import { EnvironmentEnum } from '../app/js/utils';
+
 export const environment = {
-    production: true
-  };
-  
+  env: EnvironmentEnum.PROD
+};

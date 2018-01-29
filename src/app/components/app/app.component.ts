@@ -1,13 +1,14 @@
 import { Component } from '@angular/core';
-import { PicrossComponent } from './picross/picross.component';
-import { TableService } from './js/table.service';
 import { Router } from '@angular/router';
 import { ViewChild } from '@angular/core';
 import * as swal from 'sweetalert2';
 import { OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/filter';
-import { TimerComponent } from './timer/timer.component';
+import { PicrossComponent } from '../picross/picross.component';
+import { TimerComponent } from '../timer/timer.component';
+import { TableService } from '../../services/table/table.service';
+import { EnvironmentService } from '../../services/environment/environment.service';
 
 @Component({
     selector: 'app',
@@ -18,28 +19,27 @@ export class AppComponent implements OnInit {
     rows: number;
     cols: number;
 
-    public static DEFAULT_ROWS = 5;
-    public static DEFAULT_COLS = 5;
+    public CHOICES: number[] = [5, 8, 10, 15];
 
     @ViewChild(PicrossComponent)
     private picross: PicrossComponent;
     @ViewChild(TimerComponent)
     private timer: TimerComponent;
 
-    constructor(private router: Router, private tableService: TableService) { }
+    constructor(private router: Router, private tableService: TableService, private envService: EnvironmentService) { }
 
     ngOnInit(): void {
-        this.rows = AppComponent.DEFAULT_ROWS;
-        this.cols = AppComponent.DEFAULT_COLS;
+        this.rows = this.CHOICES[0];
+        this.cols = this.CHOICES[0];
     }
 
     generateSchema() {
         this.picross.start(this.rows, this.cols);
         this.timer.start();
+    }
 
-        this.tableService.isCompleted
-            .filter(v => v)
-            .subscribe(v => this.timer.stop());
+    endTable() {
+        this.timer.stop();
     }
 
     clearTable() {
@@ -54,4 +54,7 @@ export class AppComponent implements OnInit {
         });
     }
 
+    get env_description(): string {
+        return this.envService.description;
+    }
 }

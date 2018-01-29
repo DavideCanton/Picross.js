@@ -1,7 +1,7 @@
 import { TestBed, async } from '@angular/core/testing';
-import { AppModule } from './app.module';
 import { AppComponent } from './app.component';
 import { APP_BASE_HREF } from '@angular/common';
+import { AppModule } from '../../app.module';
 
 describe('AppComponent', () => {
   beforeEach(async(() => {

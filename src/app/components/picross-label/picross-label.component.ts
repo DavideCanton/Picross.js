@@ -1,11 +1,10 @@
-import {Component, Input, ViewEncapsulation} from '@angular/core';
-import {RowStatus} from '../js/utils';
+import {Component, Input} from '@angular/core';
+import { RowStatus } from '../../js/utils';
 
 @Component({
     selector: 'picross-label',
     templateUrl: './picross-label.component.html',
-    styleUrls: ['./picross-label.component.scss'],
-    encapsulation: ViewEncapsulation.None
+    styleUrls: ['./picross-label.component.scss']
 })
 export class PicrossLabelComponent {
     @Input()

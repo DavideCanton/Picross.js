@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { TableService } from '../js/table.service';
-import { CellStatus, RowData } from '../js/utils';
+import { Component, OnInit, EventEmitter, Output, HostListener } from '@angular/core';
 import * as _ from 'lodash';
 import { ActivatedRoute } from '@angular/router';
+import { TableService } from '../../services/table/table.service';
+import { CellStatus, RowData } from '../../js/utils';
 
 @Component({
     selector: 'picross-component',
@@ -14,15 +14,15 @@ export class PicrossComponent implements OnInit {
     rows: number;
     cols: number;
     initialized: boolean;
-    end: boolean;
+
+    @Output()
+    endTable = new EventEmitter<any>();
 
     constructor(private tableService: TableService) {
     }
 
     ngOnInit(): void {
         this.initialized = false;
-
-        this.tableService.isCompleted.subscribe(v => this.end = v);
     }
 
     start(rows: number, cols: number) {
@@ -47,6 +47,21 @@ export class PicrossComponent implements OnInit {
 
     disablePressing() {
         this.tableService.setPressing(null);
+    }
+
+    @HostListener('mouseup')
+    onMouseUp() {
+        this.disablePressing();
+    }
+
+    change() {
+        if (this.tableService.isCompleted)
+            this.endTable.emit();
+    }
+
+    @HostListener('contextmenu')
+    onContextMenu(): boolean {
+        return false;
     }
 }
 

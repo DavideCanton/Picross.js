@@ -1,13 +1,12 @@
-import { Component, Input, ViewEncapsulation } from '@angular/core';
-import { TableService } from '../js/table.service';
-import { CellStatus } from '../js/utils';
+import { Component, Input, ViewEncapsulation, Output, EventEmitter } from '@angular/core';
 import { HostListener } from '@angular/core';
+import { CellStatus } from '../../js/utils';
+import { TableService } from '../../services/table/table.service';
 
 @Component({
     selector: 'picross-cell',
     templateUrl: './picross-cell.component.html',
     styleUrls: ['./picross-cell.component.scss'],
-    encapsulation: ViewEncapsulation.None
 })
 export class PicrossCellComponent {
     @Input()
@@ -15,6 +14,9 @@ export class PicrossCellComponent {
 
     @Input()
     col: number;
+
+    @Output()
+    changeEvent = new EventEmitter<any>();
 
     constructor(private tableService: TableService) {
     }
@@ -31,11 +33,16 @@ export class PicrossCellComponent {
         return this.status === CellStatus.GRAYED;
     }
 
+    get end(): boolean {
+        return this.tableService.isCompleted;
+    }
+
     @HostListener('mouseenter')
     onMouseEnter() {
         const pressing = this.tableService.getPressing();
         if (pressing !== null) {
             this.tableService.setCellStatus(this.row, this.col, pressing);
+            this.changeEvent.next();
         }
     }
 
@@ -44,6 +51,7 @@ export class PicrossCellComponent {
         if (event.button === 0) {
             this.tableService.pressedCell(this.row, this.col);
             this.tableService.setPressing(this.tableService.getCellStatus(this.row, this.col));
+            this.changeEvent.next();
         } else if (event.button === 2) {
             event.preventDefault();
             event.stopPropagation();

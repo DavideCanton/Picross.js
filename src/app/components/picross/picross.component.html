@@ -1,5 +1,5 @@
 <div id="content">
-    <table *ngIf="initialized" id="picrossTable" [class.completed]="end"
+    <table *ngIf="initialized" id="picrossTable"
            onselectstart="return false" ondragstart="return false" (mouseleave)="disablePressing()">
         <!-- column labels -->
         <tr>
@@ -24,7 +24,7 @@
             </td>
 
             <td  *ngFor="let colIndex of range(cols); let c = index">
-                <picross-cell [row]="r" [col]="c"></picross-cell>
+                <picross-cell [row]="r" [col]="c" (changeEvent)="change()"></picross-cell>
             </td>
         </tr>
     </table>

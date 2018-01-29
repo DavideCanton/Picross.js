@@ -43,6 +43,11 @@ export class TimerComponent implements OnInit {
     return TimerComponent.pad(val, 2);
   }
 
+  get minute1(): string { return this.minutes[0]; }
+  get minute2(): string { return this.minutes[1]; }
+  get second1(): string { return this.seconds[0]; }
+  get second2(): string { return this.seconds[1]; }
+
   get isRunning(): boolean {
     return this._isRunning;
   }

@@ -1,6 +1,6 @@
 import { Component, Input, ViewEncapsulation, Output, EventEmitter } from '@angular/core';
 import { HostListener } from '@angular/core';
-import { CellStatus } from '../../js/utils';
+import { CellStatus } from '../../common/utils';
 import { TableService } from '../../services/table/table.service';
 
 @Component({

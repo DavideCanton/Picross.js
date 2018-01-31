@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { IEnvironment, EnvironmentEnum } from '../../js/utils';
+import { IEnvironment, EnvironmentEnum } from '../../common/utils';
 import { environment } from '../../../environments/environment';
 
 

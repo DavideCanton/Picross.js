@@ -1,5 +1,5 @@
 import { TestBed, async } from '@angular/core/testing';
-import { AppComponent } from './app.component';
+import { PicrossCellComponent } from './picross-cell.component';
 import { APP_BASE_HREF } from '@angular/common';
 import { AppModule } from '../../app.module';
 
@@ -13,20 +13,9 @@ describe('AppComponent', () => {
     }).compileComponents();
   }));
 
-  it('should create the app', () => {
-    const fixture = TestBed.createComponent(AppComponent);
+  it('should create the component', () => {
+    const fixture = TestBed.createComponent(PicrossCellComponent);
     const app = fixture.componentInstance;
     expect(app).toBeTruthy();
-  });
-
-  it('default values are set up correctly', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app).toBeTruthy();
-
-    fixture.detectChanges();
-
-    expect(app.rows).toBe(app.CHOICES[0]);
-    expect(app.cols).toBe(app.CHOICES[0]);
   });
 });

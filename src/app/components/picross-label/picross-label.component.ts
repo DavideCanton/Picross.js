@@ -1,5 +1,5 @@
 import {Component, Input} from '@angular/core';
-import { RowStatus } from '../../js/utils';
+import { RowStatus } from '../../common/utils';
 
 @Component({
     selector: 'picross-label',

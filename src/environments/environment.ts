@@ -1,4 +1,4 @@
-import { EnvironmentEnum } from '../app/js/utils';
+import { EnvironmentEnum } from '../app/common/utils';
 
 
 // The file contents for the current environment will overwrite these during build.

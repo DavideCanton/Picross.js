@@ -3,7 +3,7 @@ import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 
 import { AppModule } from './app/app.module';
 import { environment } from './environments/environment';
-import { EnvironmentEnum } from './app/js/utils';
+import { EnvironmentEnum } from './app/common/utils';
 
 if (environment.env === EnvironmentEnum.PROD) {
   enableProdMode();

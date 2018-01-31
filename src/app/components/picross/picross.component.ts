@@ -2,7 +2,7 @@ import { Component, OnInit, EventEmitter, Output, HostListener } from '@angular/
 import * as _ from 'lodash';
 import { ActivatedRoute } from '@angular/router';
 import { TableService } from '../../services/table/table.service';
-import { CellStatus, RowData } from '../../js/utils';
+import { CellStatus, RowData } from '../../common/utils';
 
 @Component({
     selector: 'picross-component',

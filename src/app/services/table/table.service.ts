@@ -14,7 +14,6 @@ export interface JSONSchemeData {
 @Injectable()
 export class TableService {
     private table: PicrossTable;
-    private end: boolean;
     private pressing: CellStatus;
 
     constructor() {
@@ -32,7 +31,6 @@ export class TableService {
 
     initTable(row: number, col: number) {
         this.table = PicrossTable.randomTable(row, col, 0.8);
-        this.end = false;
     }
 
     private updateEnabled(r: number, c: number) {
@@ -45,46 +43,28 @@ export class TableService {
     }
 
     setCellStatus(i: number, j: number, status: CellStatus) {
-        if (this.end) {
-            return;
-        }
-
         if (this.table.getRowData(i).disabled || this.table.getColData(j).disabled) {
             return;
         }
 
         this.table.setCellStatus(i, j, status);
         this.updateEnabled(i, j);
-
-        if (this.table.isCompleted()) {
-            this.end = true;
-        }
     }
 
     get isCompleted(): boolean {
-        return this.end;
+        return this.table.isCompleted();
     }
 
     pressedCell(i: number, j: number) {
-        if (this.end) {
-            return;
-        }
         if (this.table.getRowData(i).disabled || this.table.getColData(j).disabled) {
             return;
         }
 
         this.table.closeCell(i, j);
         this.updateEnabled(i, j);
-
-        if (this.table.isCompleted()) {
-            this.end = true;
-        }
     }
 
     pressedRightCell(i: number, j: number) {
-        if (this.end) {
-            return;
-        }
         if (this.table.getRowData(i).disabled || this.table.getColData(j).disabled) {
             return;
         }

@@ -6,6 +6,7 @@
             <td class="row-label"></td>
             <td *ngFor="let colData of getColsData()" class="col-label">
                 <picross-label *ngFor="let val of colData.label"
+                               (mouseenter)="disablePressing()"
                                [labelClass]="'col-label-cell'"
                                [text]="val"
                                [status]="colData.status">
@@ -17,14 +18,20 @@
             <!-- row labels -->
             <td class="row-label">
                 <picross-label *ngFor="let val of rowData.label"
+                               (mouseenter)="disablePressing()"
                                [labelClass]="'row-label-cell'"
                                [text]="val"
                                [status]="rowData.status">
                 </picross-label>
             </td>
 
-            <td  *ngFor="let colIndex of range(cols); let c = index">
-                <picross-cell [row]="r" [col]="c" (changeEvent)="change()"></picross-cell>
+            <td *ngFor="let colIndex of range(cols); let c = index">
+                <picross-cell [status]="getStatus(r, c)" 
+                              [end]="isCompleted"
+                              (mouseenter)="onMouseEnterCell(r, c)"
+                              (mouseup)="onMouseUpCell()"
+                              (mousedown)="onMouseDownCell($event, r, c)">
+                </picross-cell>
             </td>
         </tr>
     </table>

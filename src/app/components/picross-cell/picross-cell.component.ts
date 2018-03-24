@@ -1,7 +1,5 @@
-import { Component, Input, ViewEncapsulation, Output, EventEmitter } from '@angular/core';
-import { HostListener } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { CellStatus } from '../../common/utils';
-import { TableService } from '../../services/table/table.service';
 
 @Component({
     selector: 'picross-cell',
@@ -10,20 +8,10 @@ import { TableService } from '../../services/table/table.service';
 })
 export class PicrossCellComponent {
     @Input()
-    row: number;
+    status: CellStatus;
 
     @Input()
-    col: number;
-
-    @Output()
-    changeEvent = new EventEmitter<any>();
-
-    constructor(private tableService: TableService) {
-    }
-
-    get status(): CellStatus {
-        return this.tableService.getCellStatus(this.row, this.col);
-    }
+    end: boolean;
 
     get isClosed(): boolean {
         return this.status === CellStatus.CLOSED;
@@ -33,40 +21,7 @@ export class PicrossCellComponent {
         return this.status === CellStatus.GRAYED;
     }
 
-    get end(): boolean {
-        return this.tableService.isCompleted;
-    }
-
-    @HostListener('mouseenter')
-    onMouseEnter() {
-        const pressing = this.tableService.getPressing();
-        if (pressing !== null) {
-            this.tableService.setCellStatus(this.row, this.col, pressing);
-            this.changeEvent.next();
-        }
-    }
-
-    @HostListener('mousedown', ['$event'])
-    onMouseDown(event: MouseEvent) {
-        if (event.button === 0) {
-            this.tableService.pressedCell(this.row, this.col);
-            this.tableService.setPressing(this.tableService.getCellStatus(this.row, this.col));
-            this.changeEvent.next();
-        } else if (event.button === 2) {
-            event.preventDefault();
-            event.stopPropagation();
-            this.tableService.pressedRightCell(this.row, this.col);
-            this.tableService.setPressing(this.tableService.getCellStatus(this.row, this.col));
-        }
-    }
-
-    @HostListener('mouseup')
-    onMouseUp() {
-        this.tableService.setPressing(null);
-    }
-
-    @HostListener('contextmenu')
-    onContextMenu(): boolean {
-        return false;
+    get isCompleted(): boolean {
+        return this.end;
     }
 }

@@ -1,5 +1,5 @@
 import {Component, Input} from '@angular/core';
-import { RowStatus } from '../../common/utils';
+import { SeqStatus } from '../../common/utils';
 
 @Component({
     selector: 'picross-label',
@@ -8,7 +8,7 @@ import { RowStatus } from '../../common/utils';
 })
 export class PicrossLabelComponent {
     @Input()
-    status: RowStatus;
+    status: SeqStatus;
 
     @Input()
     labelClass: string;
@@ -20,10 +20,10 @@ export class PicrossLabelComponent {
     }
 
     get isEqual(): boolean {
-        return this.status === RowStatus.EQUAL;
+        return this.status === SeqStatus.EQUAL;
     }
 
     get isWrong(): boolean {
-        return this.status === RowStatus.WRONG;
+        return this.status === SeqStatus.WRONG;
     }
 }

@@ -16,11 +16,13 @@ export class TimerComponent implements OnInit {
 
   ngOnInit(): void {
     this.timer = Observable.interval(1000);
+
     this.timer.subscribe(_ => {
       if (this._isRunning) {
         ++this.time;
       }
     });
+
     this.time = 0;
   }
 

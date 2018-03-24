@@ -45,23 +45,54 @@ export class PicrossComponent implements OnInit {
         return this.tableService.getColsData();
     }
 
-    disablePressing() {
+    getStatus(r: number, c: number): CellStatus {
+        return this.tableService.getCellStatus(r, c);
+    }
+
+    disablePressing(): void {
         this.tableService.setPressing(null);
-    }
-
-    @HostListener('mouseup')
-    onMouseUp() {
-        this.disablePressing();
-    }
-
-    change() {
-        if (this.tableService.isCompleted)
-            this.endTable.emit();
     }
 
     @HostListener('contextmenu')
     onContextMenu(): boolean {
         return false;
     }
+
+    onMouseEnterCell(row: number, col: number) {
+        if (this.isCompleted) return;
+
+        const pressing = this.tableService.getPressing();
+        if (pressing !== null) {
+            this.tableService.setCellStatus(row, col, pressing);
+        }
+    }
+
+    onMouseDownCell(event: MouseEvent, row: number, col: number) {
+        if (this.isCompleted) return;
+
+        if (event.button === 0) {
+            this.tableService.pressedCell(row, col);
+            this.tableService.setPressing(this.tableService.getCellStatus(row, col));
+        } else if (event.button === 2) {
+            event.preventDefault();
+            event.stopPropagation();
+            this.tableService.pressedRightCell(row, col);
+            this.tableService.setPressing(this.tableService.getCellStatus(row, col));
+        }
+
+        if (this.isCompleted) {
+            this.endTable.emit();
+            this.disablePressing();
+        }
+    }
+
+    get isCompleted(): boolean {
+        return this.tableService.isCompleted;
+    }
+
+    onMouseUpCell() {
+        this.disablePressing();
+    }
+
 }
 

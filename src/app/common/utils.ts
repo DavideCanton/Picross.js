@@ -17,7 +17,7 @@ export const enum CellStatus {
     GRAYED
 }
 
-export const enum RowStatus {
+export const enum SeqStatus {
     EQUAL,
     WRONG,
     NOT_EQUAL
@@ -26,7 +26,7 @@ export const enum RowStatus {
 export interface RowData {
     label: number[];
     disabled: boolean;
-    status: RowStatus;
+    status: SeqStatus;
 }
 
 export class PicrossTable {
@@ -36,45 +36,17 @@ export class PicrossTable {
     rows: RowData[];
     cols: RowData[];
 
-    static randomTable(r: number, c: number, percentage: number): PicrossTable {
-        const table = new PicrossTable(null);
-        table.r = r;
-        table.c = c;
-
-        table.createRandomTable(percentage);
-        table.setupData();
-        table.createEmptyTable();
-
-        return table;
+    constructor(r: number, c: number) {
+        this.r = r;
+        this.c = c;
     }
 
-    constructor(data: JSONSchemeData) {
-        if (data) {
-            this.r = data.rows;
-            this.c = data.cols;
+    static randomTable(r: number, c: number, percentage: number): PicrossTable {
+        const table = new PicrossTable(r, c);
 
-            this.rows = data.rowLabels.map((label: number[]) => {
-                const disabled = PicrossTable._isLabelDisabled(label);
+        table.fillWithRandomData(percentage);
 
-                return <RowData>{
-                    label: label,
-                    disabled: disabled,
-                    status: disabled ? RowStatus.EQUAL : RowStatus.NOT_EQUAL
-                };
-            });
-            this.cols = data.colLabels.map((label: number[]) => {
-                const disabled = PicrossTable._isLabelDisabled(label);
-
-                return <RowData>{
-                    label: label,
-                    disabled: disabled,
-                    status: disabled ? RowStatus.EQUAL : RowStatus.NOT_EQUAL
-                };
-            });
-
-            this.table = new Array(this.r);
-            this.createEmptyTable();
-        }
+        return table;
     }
 
     getCellStatus(i: number, j: number): CellStatus {
@@ -115,13 +87,18 @@ export class PicrossTable {
         }
     }
 
-    private _computeActualRowLabels(r: number): number[] {
-        let row = [];
-        const incrementer = this.IncrementerFactory(row);
+    private * makeRowGenerator(r: number): Iterable<CellStatus> {
+        yield* this.table[r];
+    }
 
-        for (let j = 0; j < this.c; j++) {
-            incrementer(this.getCellStatus(r, j));
+    private * makeColGenerator(c: number): Iterable<CellStatus> {
+        for (let i = 0; i < this.r; i++) {
+            yield this.getCellStatus(i, c);
         }
+    }
+
+    private computeActualLabels(gen: Iterable<CellStatus>): number[] {
+        let row = [...this.blocks(gen)];
 
         if (row.length === 0) {
             row = [0];
@@ -130,39 +107,38 @@ export class PicrossTable {
         return row;
     }
 
-    private _computeActualColLabels(c: number): number[] {
-        let col = [];
-        const incrementer = this.IncrementerFactory(col);
-
-        for (let i = 0; i < this.r; i++) {
-            incrementer(this.getCellStatus(i, c));
-        }
-
-        if (col.length === 0) {
-            col = [0];
-        }
-
-        return col;
+    private computeActualRowLabels(r: number): number[] {
+        return this.computeActualLabels(this.makeRowGenerator(r));
     }
 
-    private IncrementerFactory(res: number[]): CheckFunc {
-        let currentBlock = false;
+    private computeActualColLabels(c: number): number[] {
+        return this.computeActualLabels(this.makeColGenerator(c));
+    }
 
-        return (status: CellStatus) => {
+    private * blocks(res: Iterable<CellStatus>): Iterable<number> {
+        let currentInBlock = false;
+        let cur = 0;
+
+        for (const status of res) {
             if (status === CellStatus.CLOSED) {
-                if (!currentBlock) {
-                    res.push(1);
-                    currentBlock = true;
-                } else {
-                    res[res.length - 1]++;
+                if (!currentInBlock) {
+                    currentInBlock = true;
                 }
-            } else {
-                currentBlock = false;
+
+                cur++;
+            } else if (cur > 0) {
+                yield cur;
+                cur = 0;
+                currentInBlock = false;
             }
-        };
+        }
+
+        if (currentInBlock) {
+            yield cur;
+        }
     }
 
-    private createRandomTable(percentage: number): void {
+    private fillWithRandomData(percentage: number): void {
         this.table = [];
         for (let i = 0; i < this.r; i++) {
             const row = new Array<CellStatus>(this.c);
@@ -172,22 +148,8 @@ export class PicrossTable {
             }
             this.table[i] = row;
         }
-    }
 
-    private createEmptyTable() {
-        for (let i = 0; i < this.r; i++) {
-            const row = new Array<CellStatus>(this.c);
-            const row_disabled = this.getRowData(i).disabled;
-
-            for (let j = 0; j < this.c; j++) {
-                if (row_disabled) {
-                    row[j] = CellStatus.GRAYED;
-                } else {
-                    row[j] = this.getColData(j).disabled ? CellStatus.GRAYED : CellStatus.OPEN;
-                }
-            }
-            this.table[i] = row;
-        }
+        this.setupData();
     }
 
     getRowsData(): RowData[] {
@@ -207,39 +169,34 @@ export class PicrossTable {
     }
 
     isCompleted(): boolean {
-        return (this.rows.every((data: RowData) => data.status === RowStatus.EQUAL) &&
-            this.cols.every((data: RowData) => data.status === RowStatus.EQUAL));
-    }
-
-    // tslint:disable-next-line:member-ordering
-    private static _isLabelDisabled(label: number[]): boolean {
-        return label.length === 1 && label[0] === 0;
+        return (this.rows.every(data => data.status === SeqStatus.EQUAL) &&
+            this.cols.every(data => data.status === SeqStatus.EQUAL));
     }
 
     updateRowStatus(r: number): void {
-        this.rows[r].status = PicrossTable._checkRow(this.rows[r].label, this._computeActualRowLabels(r));
+        this.rows[r].status = PicrossTable.computeSeqStatus(this.rows[r].label, this.computeActualRowLabels(r));
     }
 
     updateColStatus(c: number): void {
-        this.cols[c].status = PicrossTable._checkRow(this.cols[c].label, this._computeActualColLabels(c));
+        this.cols[c].status = PicrossTable.computeSeqStatus(this.cols[c].label, this.computeActualColLabels(c));
     }
 
     // tslint:disable-next-line:member-ordering
-    private static _checkRow(labels: number[], row: number[]): RowStatus {
-        if (labels.length < row.length) {
-            return RowStatus.WRONG;
-        } else if (labels.length > row.length) {
-            return RowStatus.NOT_EQUAL;
+    private static computeSeqStatus(labels: number[], seqGroups: number[]): SeqStatus {
+        if (labels.length < seqGroups.length) {
+            return SeqStatus.WRONG;
+        } else if (labels.length > seqGroups.length) {
+            return SeqStatus.NOT_EQUAL;
         }
 
         for (let i = 0; i < labels.length; i++) {
-            if (labels[i] < row[i]) {
-                return RowStatus.WRONG;
-            } else if (labels[i] > row[i]) {
-                return RowStatus.NOT_EQUAL;
+            if (labels[i] < seqGroups[i]) {
+                return SeqStatus.WRONG;
+            } else if (labels[i] > seqGroups[i]) {
+                return SeqStatus.NOT_EQUAL;
             }
         }
-        return RowStatus.EQUAL;
+        return SeqStatus.EQUAL;
     }
 
     private setupData(): void {
@@ -247,23 +204,37 @@ export class PicrossTable {
         this.cols = [];
 
         const params = [
-            [this.rows, this.r, this._computeActualRowLabels.bind(this)],
-            [this.cols, this.c, this._computeActualColLabels.bind(this)]
+            [this.rows, this.r, this.computeActualRowLabels.bind(this)],
+            [this.cols, this.c, this.computeActualColLabels.bind(this)]
         ];
 
         params.forEach(val =>
             ((array: RowData[], len: number, fun: (number) => number[]) => {
                 for (let i = 0; i < len; i++) {
                     const label = fun(i);
-                    const disabled = PicrossTable._isLabelDisabled(label);
+                    const disabled = label.length === 1 && label[0] === 0;
 
                     array.push(<RowData>{
                         label: label,
                         disabled: disabled,
-                        status: disabled ? RowStatus.EQUAL : RowStatus.NOT_EQUAL
+                        status: disabled ? SeqStatus.EQUAL : SeqStatus.NOT_EQUAL
                     });
                 }
             }).apply(this, val));
+
+        for (let i = 0; i < this.r; i++) {
+            const row = new Array<CellStatus>(this.c);
+            const row_disabled = this.getRowData(i).disabled;
+
+            for (let j = 0; j < this.c; j++) {
+                if (row_disabled) {
+                    row[j] = CellStatus.GRAYED;
+                } else {
+                    row[j] = this.getColData(j).disabled ? CellStatus.GRAYED : CellStatus.OPEN;
+                }
+            }
+            this.table[i] = row;
+        }
     }
 
     clear() {
@@ -278,10 +249,10 @@ export class PicrossTable {
                 }
                 row[j] = CellStatus.OPEN;
 
-                this.cols[j].status = RowStatus.NOT_EQUAL;
+                this.cols[j].status = SeqStatus.NOT_EQUAL;
             });
 
-            this.rows[i].status = RowStatus.NOT_EQUAL;
+            this.rows[i].status = SeqStatus.NOT_EQUAL;
         });
     }
 }

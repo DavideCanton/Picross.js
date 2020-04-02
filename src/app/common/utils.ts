@@ -2,15 +2,6 @@ import { JSONSchemeData } from '../services/table/table.service';
 
 type CheckFunc = (CellStatus) => void;
 
-export enum EnvironmentEnum {
-    DEV,
-    PROD
-}
-
-export interface IEnvironment {
-    env: EnvironmentEnum;
-}
-
 export const enum CellStatus {
     OPEN,
     CLOSED,

@@ -21,9 +21,9 @@ export class AppComponent implements OnInit {
 
     public choices: number[] = [5, 8, 10, 15];
 
-    @ViewChild(PicrossComponent)
+    @ViewChild(PicrossComponent, { static: true })
     private picross: PicrossComponent;
-    @ViewChild(TimerComponent)
+    @ViewChild(TimerComponent, { static: true })
     private timer: TimerComponent;
 
     constructor(private router: Router, private tableService: TableService, private envService: EnvironmentService) { }

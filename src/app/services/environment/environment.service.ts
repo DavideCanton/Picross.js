@@ -1,20 +1,11 @@
 import { Injectable } from '@angular/core';
-import { IEnvironment, EnvironmentEnum } from '../../common/utils';
-import { environment } from '../../../environments/environment';
-
+import { environment } from 'src/environments/environment';
 
 @Injectable()
-export class EnvironmentService {
-  env: IEnvironment;
-
-  constructor() {
-    this.env = environment;
-  }
-
-  get description(): string {
-    switch (this.env.env) {
-      case EnvironmentEnum.DEV: return 'Sviluppo';
-      case EnvironmentEnum.PROD: return 'Produzione';
+export class EnvironmentService
+{
+    get description(): string
+    {
+        return environment.production ? 'Produzione' : 'Sviluppo';
     }
-  }
 }

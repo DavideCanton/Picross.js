@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs/Subject';
-import { Observable } from 'rxjs/Observable';
-import { PicrossTable, CellStatus, RowData } from '../../common/utils';
+
+import { CellStatus, PicrossTable, RowData } from '../../common/utils';
 
 
-export interface JSONSchemeData {
+export interface JSONSchemeData
+{
     rowLabels: number[][];
     colLabels: number[][];
     rows: number;
@@ -12,38 +12,47 @@ export interface JSONSchemeData {
 }
 
 @Injectable()
-export class TableService {
+export class TableService
+{
     private table: PicrossTable;
     private pressing: CellStatus;
 
-    constructor() {
+    constructor()
+    {
         this.table = null;
         this.pressing = null;
     }
 
-    setPressing(pressing: CellStatus) {
+    setPressing(pressing: CellStatus)
+    {
         this.pressing = pressing;
     }
 
-    getPressing(): CellStatus {
+    getPressing(): CellStatus
+    {
         return this.pressing;
     }
 
-    initTable(row: number, col: number) {
+    initTable(row: number, col: number)
+    {
         this.table = PicrossTable.randomTable(row, col, 0.8);
     }
 
-    private updateEnabled(r: number, c: number) {
+    private updateEnabled(r: number, c: number)
+    {
         this.table.updateRowStatus(r);
         this.table.updateColStatus(c);
     }
 
-    getCellStatus(i: number, j: number): CellStatus {
+    getCellStatus(i: number, j: number): CellStatus
+    {
         return this.table.getCellStatus(i, j);
     }
 
-    setCellStatus(i: number, j: number, status: CellStatus) {
-        if (this.table.getRowData(i).disabled || this.table.getColData(j).disabled) {
+    setCellStatus(i: number, j: number, status: CellStatus)
+    {
+        if(this.table.getRowData(i).disabled || this.table.getColData(j).disabled)
+        {
             return;
         }
 
@@ -51,12 +60,15 @@ export class TableService {
         this.updateEnabled(i, j);
     }
 
-    get isCompleted(): boolean {
+    get isCompleted(): boolean
+    {
         return this.table.isCompleted();
     }
 
-    pressedCell(i: number, j: number) {
-        if (this.table.getRowData(i).disabled || this.table.getColData(j).disabled) {
+    pressedCell(i: number, j: number)
+    {
+        if(this.table.getRowData(i).disabled || this.table.getColData(j).disabled)
+        {
             return;
         }
 
@@ -64,31 +76,38 @@ export class TableService {
         this.updateEnabled(i, j);
     }
 
-    pressedRightCell(i: number, j: number) {
-        if (this.table.getRowData(i).disabled || this.table.getColData(j).disabled) {
+    pressedRightCell(i: number, j: number)
+    {
+        if(this.table.getRowData(i).disabled || this.table.getColData(j).disabled)
+        {
             return;
         }
         this.table.grayCell(i, j);
         this.updateEnabled(i, j);
     }
 
-    clearTable() {
+    clearTable()
+    {
         this.table.clear();
     }
 
-    getRowsData(): RowData[] {
+    getRowsData(): RowData[]
+    {
         return this.table.getRowsData();
     }
 
-    getColsData(): RowData[] {
+    getColsData(): RowData[]
+    {
         return this.table.getColsData();
     }
 
-    get rows(): number {
+    get rows(): number
+    {
         return this.table.r;
     }
 
-    get cols(): number {
+    get cols(): number
+    {
         return this.table.c;
     }
 }

@@ -3,8 +3,8 @@ import { Router } from '@angular/router';
 import { ViewChild } from '@angular/core';
 import * as swal from 'sweetalert2';
 import { OnInit } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/filter';
+import { Observable } from 'rxjs';
+
 import { PicrossComponent } from '../picross/picross.component';
 import { TimerComponent } from '../timer/timer.component';
 import { TableService } from '../../services/table/table.service';

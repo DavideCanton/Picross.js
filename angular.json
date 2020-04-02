@@ -29,7 +29,7 @@
             "scripts": []
           },
           "configurations": {
-            "prod": {
+            "production": {
               "budgets": [
                 {
                   "type": "anyComponentStyle",
@@ -40,14 +40,6 @@
                 {
                   "replace": "src/environments/environment.ts",
                   "with": "src/environments/environment.prod.ts"
-                }
-              ]
-            },
-            "production": {
-              "budgets": [
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "6kb"
                 }
               ],
               "optimization": true,
@@ -68,9 +60,6 @@
             "browserTarget": "picross-js:build"
           },
           "configurations": {
-            "prod": {
-              "browserTarget": "picross-js:build:prod"
-            },
             "production": {
               "browserTarget": "picross-js:build:production"
             }
@@ -90,10 +79,7 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.spec.json",
             "scripts": [],
-            "styles": [
-              "node_modules/bootstrap/dist/css/bootstrap.min.css",
-              "src/styles.scss"
-            ],
+            "styles": [],
             "assets": [
               "src/assets",
               "src/favicon.ico"

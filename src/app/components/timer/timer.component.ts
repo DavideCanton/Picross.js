@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { interval, Observable } from 'rxjs';
+import {Component, OnInit} from '@angular/core';
+import {padStart} from 'lodash';
+import {BehaviorSubject, combineLatest, Observable, Subject, timer} from 'rxjs';
+import {filter, map, scan, switchAll} from 'rxjs/operators';
 
 @Component({
     selector: 'timer',
@@ -8,69 +10,51 @@ import { interval, Observable } from 'rxjs';
 })
 export class TimerComponent implements OnInit
 {
-    time: number;
-    timer: Observable<number>;
-    _isRunning: boolean;
+    timeString$: Observable<string>;
 
-    constructor() { }
+    private toggle$ = new BehaviorSubject<boolean>(false);
+    private reset$ = new Subject<any>();
 
-    ngOnInit(): void
+    ngOnInit()
     {
-        this.timer = interval(1000);
-
-        this.timer.subscribe(_ =>
-        {
-            if(this._isRunning)
-            {
-                ++this.time;
-            }
-        });
-
-        this.time = 0;
+        this.initTimer();
     }
 
     start()
     {
-        this.time = 0;
-        this._isRunning = true;
+        this.toggle$.next(true);
     }
 
     stop()
     {
-        this._isRunning = false;
+        this.toggle$.next(false);
     }
 
-    get minutes(): string
+    reset()
     {
-        const val = Math.floor(this.time / 60);
-        return TimerComponent.pad(val, 2);
+        this.stop();
+        this.reset$.next();
     }
 
-    get seconds(): string
+    private initTimer()
     {
-        const val = Math.floor(this.time % 60);
-        return TimerComponent.pad(val, 2);
+        this.timeString$ = this.reset$.pipe(
+            map(() => combineLatest([
+                timer(0, 1000),
+                this.toggle$
+            ]).pipe(
+                filter(([, v]) => v),
+                scan((acc,) => acc + 1, 0),
+                map(ticks => TimerComponent.formatTime(ticks))
+            )),
+            switchAll()
+        );
     }
 
-    get minute1(): string { return this.minutes[0]; }
-    get minute2(): string { return this.minutes[1]; }
-    get second1(): string { return this.seconds[0]; }
-    get second2(): string { return this.seconds[1]; }
-
-    get isRunning(): boolean
+    private static formatTime(ticks: number)
     {
-        return this._isRunning;
+        const minutes = Math.floor(ticks / 60).toString();
+        const seconds = Math.floor(ticks % 60).toString();
+        return `${padStart(minutes, 2, '0')}:${padStart(seconds, 2, '0')}`;
     }
-
-    // tslint:disable-next-line:member-ordering
-    static pad(v: number, size: number): string
-    {
-        let s = String(v);
-        while(s.length < (size || 2))
-        {
-            s = '0' + s;
-        }
-        return s;
-    }
-
 }

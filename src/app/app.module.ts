@@ -1,16 +1,14 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule } from '@angular/forms';
-import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
-import { PicrossComponent } from './components/picross/picross.component';
-import { AppComponent } from './components/app/app.component';
-import { PicrossCellComponent } from './components/picross-cell/picross-cell.component';
-import { PicrossLabelComponent } from './components/picross-label/picross-label.component';
-import { TimerComponent } from './components/timer/timer.component';
-import { AppRoutingModule } from './app-routing.module';
-import { TableService } from './services/table/table.service';
-import { EnvironmentService } from './services/environment/environment.service';
-
+import {NgModule} from '@angular/core';
+import {FormsModule} from '@angular/forms';
+import {BrowserModule} from '@angular/platform-browser';
+import {AppRoutingModule} from 'app/app-routing.module';
+import {AppComponent} from 'app/components/app/app.component';
+import {PicrossCellComponent} from 'app/components/picross-cell/picross-cell.component';
+import {PicrossLabelComponent} from 'app/components/picross-label/picross-label.component';
+import {PicrossComponent} from 'app/components/picross/picross.component';
+import {TimerComponent} from 'app/components/timer/timer.component';
+import {EnvironmentService} from 'app/services/environment/environment.service';
+import {TableService} from 'app/services/table/table.service';
 
 @NgModule({
   declarations: [

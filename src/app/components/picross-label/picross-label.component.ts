@@ -1,29 +1,24 @@
 import {Component, Input} from '@angular/core';
-import { SeqStatus } from '../../common/utils';
+import {SeqStatus} from 'app/common/utils';
 
 @Component({
     selector: 'picross-label',
     templateUrl: './picross-label.component.html',
     styleUrls: ['./picross-label.component.scss']
 })
-export class PicrossLabelComponent {
-    @Input()
-    status: SeqStatus;
+export class PicrossLabelComponent
+{
+    @Input() status: SeqStatus;
+    @Input() labelClass: string;
+    @Input() text: string;
 
-    @Input()
-    labelClass: string;
-
-    @Input()
-    text: string;
-
-    constructor() {
-    }
-
-    get isEqual(): boolean {
+    get isEqual(): boolean
+    {
         return this.status === SeqStatus.EQUAL;
     }
 
-    get isWrong(): boolean {
+    get isWrong(): boolean
+    {
         return this.status === SeqStatus.WRONG;
     }
 }

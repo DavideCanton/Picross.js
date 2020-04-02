@@ -1,7 +1,5 @@
-import { Injectable } from '@angular/core';
-
-import { CellStatus, PicrossTable, RowData } from '../../common/utils';
-
+import {Injectable} from '@angular/core';
+import {CellStatus, PicrossTable, RowData} from 'app/common/utils';
 
 export interface JSONSchemeData
 {
@@ -51,7 +49,7 @@ export class TableService
 
     setCellStatus(i: number, j: number, status: CellStatus)
     {
-        if(this.table.getRowData(i).disabled || this.table.getColData(j).disabled)
+        if (this.table.getRowData(i).disabled || this.table.getColData(j).disabled)
         {
             return;
         }
@@ -67,7 +65,7 @@ export class TableService
 
     pressedCell(i: number, j: number)
     {
-        if(this.table.getRowData(i).disabled || this.table.getColData(j).disabled)
+        if (this.table.getRowData(i).disabled || this.table.getColData(j).disabled)
         {
             return;
         }
@@ -78,10 +76,9 @@ export class TableService
 
     pressedRightCell(i: number, j: number)
     {
-        if(this.table.getRowData(i).disabled || this.table.getColData(j).disabled)
-        {
+        if (this.table.getRowData(i).disabled || this.table.getColData(j).disabled)
             return;
-        }
+
         this.table.grayCell(i, j);
         this.updateEnabled(i, j);
     }

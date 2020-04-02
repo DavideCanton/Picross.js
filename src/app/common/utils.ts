@@ -1,7 +1,3 @@
-import { JSONSchemeData } from '../services/table/table.service';
-
-type CheckFunc = (CellStatus) => void;
-
 export const enum CellStatus {
     OPEN,
     CLOSED,
@@ -88,8 +84,8 @@ export class PicrossTable {
         }
     }
 
-    private computeActualLabels(gen: Iterable<CellStatus>): number[] {
-        let row = [...this.blocks(gen)];
+    private static computeActualLabels(gen: Iterable<CellStatus>): number[] {
+        let row = [...PicrossTable.blocks(gen)];
 
         if (row.length === 0) {
             row = [0];
@@ -99,14 +95,14 @@ export class PicrossTable {
     }
 
     private computeActualRowLabels(r: number): number[] {
-        return this.computeActualLabels(this.makeRowGenerator(r));
+        return PicrossTable.computeActualLabels(this.makeRowGenerator(r));
     }
 
     private computeActualColLabels(c: number): number[] {
-        return this.computeActualLabels(this.makeColGenerator(c));
+        return PicrossTable.computeActualLabels(this.makeColGenerator(c));
     }
 
-    private * blocks(res: Iterable<CellStatus>): Iterable<number> {
+    private static* blocks(res: Iterable<CellStatus>): Iterable<number> {
         let currentInBlock = false;
         let cur = 0;
 

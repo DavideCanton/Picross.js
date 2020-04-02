@@ -5,9 +5,9 @@
 <div class="container">
     <div class="row">
         <div class="col-md-6 text-right">
-            <button type="button" class="btn" *ngFor="let c of CHOICES" (click)="rows = c" [class.btn-primary]="c == rows">{{ c }}</button>
+            <button type="button" class="btn" *ngFor="let c of choices" (click)="rows = c" [class.btn-primary]="c == rows">{{ c }}</button>
             &times;
-            <button type="button" class="btn" *ngFor="let c of CHOICES" (click)="cols = c" [class.btn-primary]="c == cols">{{ c }}</button>
+            <button type="button" class="btn" *ngFor="let c of choices" (click)="cols = c" [class.btn-primary]="c == cols">{{ c }}</button>
         </div>
         <div class="col-md-6">
             <button type="submit" (click)="generateSchema()" class="btn btn-success">

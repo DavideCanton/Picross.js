@@ -19,7 +19,7 @@ export class AppComponent implements OnInit {
     rows: number;
     cols: number;
 
-    public CHOICES: number[] = [5, 8, 10, 15];
+    public choices: number[] = [5, 8, 10, 15];
 
     @ViewChild(PicrossComponent)
     private picross: PicrossComponent;
@@ -29,8 +29,8 @@ export class AppComponent implements OnInit {
     constructor(private router: Router, private tableService: TableService, private envService: EnvironmentService) { }
 
     ngOnInit(): void {
-        this.rows = this.CHOICES[0];
-        this.cols = this.CHOICES[0];
+        this.rows = this.choices[0];
+        this.cols = this.choices[0];
     }
 
     generateSchema() {

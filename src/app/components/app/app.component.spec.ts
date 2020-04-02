@@ -26,7 +26,7 @@ describe('AppComponent', () => {
 
     fixture.detectChanges();
 
-    expect(app.rows).toBe(app.CHOICES[0]);
-    expect(app.cols).toBe(app.CHOICES[0]);
+    expect(app.rows).toBe(app.choices[0]);
+    expect(app.cols).toBe(app.choices[0]);
   });
 });
